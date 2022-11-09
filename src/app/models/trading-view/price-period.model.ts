@@ -1,4 +1,4 @@
-export class TradingViewPeriod {
+export class PricePeriod {
   public readonly time;
   public readonly open;
   public readonly close;

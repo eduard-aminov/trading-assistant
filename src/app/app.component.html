@@ -1,5 +1,30 @@
-<div>
-  <div
-    *ngFor="let stock of stocksWatchers"
-  >{{stock.ticker}}: <span *ngIf="stock.watcher$ | async as watcher">prev: {{watcher[0].volume}} current: {{watcher[1].volume}}</span></div>
+<div class="container">
+  <table>
+
+    <thead>
+    <tr>
+      <th scope="col">Название</th>
+      <th scope="col">Тикер</th>
+      <th scope="col">Мин</th>
+      <th scope="col">Макс</th>
+      <th scope="col">Открытие</th>
+      <th scope="col">Закрытие</th>
+      <th scope="col">Объем</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr *ngFor="let stock$ of stocksWatchers">
+      <ng-container *ngIf="stock$ | async as stock">
+        <td>{{stock.name}}</td>
+        <td>{{stock.tickerName}}</td>
+        <td>{{stock.pricePeriod.min}}</td>
+        <td>{{stock.pricePeriod.max}}</td>
+        <td>{{stock.pricePeriod.open}}</td>
+        <td>{{stock.pricePeriod.close}}</td>
+        <td>{{stock.pricePeriod.volume}}</td>
+      </ng-container>
+    </tr>
+    </tbody>
+  </table>
 </div>

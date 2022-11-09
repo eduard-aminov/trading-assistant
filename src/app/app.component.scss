@@ -1,0 +1,38 @@
+.container {
+  padding: 20px;
+}
+
+table {
+  color: rgb(166, 189, 213);
+}
+
+tbody tr {
+  cursor: pointer;
+}
+
+tr:nth-child(odd) {
+  background-color: rgb(33, 43, 63);
+}
+
+tr:nth-child(even) {
+  background-color: rgb(36, 52, 66);
+}
+
+tr:hover {
+  color: rgba(179, 199, 219, 1);
+}
+
+th {
+  width: 100px;
+  background-color: rgb(36, 52, 66);
+}
+
+th, td {
+  text-align: right;
+  padding: 5px;
+}
+
+th:first-child, td:first-child {
+  text-align: left;
+  width: 350px;
+}

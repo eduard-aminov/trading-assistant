@@ -1,19 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-
-interface TradingViewWebSocketPacket {
-  m: string;
-  p: any[];
-}
-
-type TradingViewWebSocketResponse = (TradingViewWebSocketPacket | number)[];
-
-interface WebSocketChannelHandlers {
-  onopen: (event: Event) => void;
-  onclose: (event: CloseEvent) => void;
-  onmessage: (event: MessageEvent) => void;
-  onerror: (event: Event) => void;
-}
+import {
+  TradingViewWebSocketPacket,
+  TradingViewWebSocketResponse
+} from '../interfaces/trading-view/trading-view-web-socket-packet.interface';
 
 const cleanerRgx = /~h~/g;
 const splitterRgx = /~m~[0-9]+~m~/g;
@@ -57,10 +47,10 @@ export class TradingViewWebSocketService {
     };
   }
 
-  public send(params: TradingViewWebSocketPacket | string): void {
+  public send(packet: TradingViewWebSocketPacket | string): void {
     if (this.channel.OPEN) {
-      const packet = this.formatPacket(params);
-      this.channel.send(packet);
+      const formattedPacket = this.formatPacket(packet);
+      this.channel.send(formattedPacket);
     }
   }
 
