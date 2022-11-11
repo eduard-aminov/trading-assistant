@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { TradingViewWebSocketService } from './trading-view-web-socket.service';
 import { BehaviorSubject, first, map, Observable, switchMap, takeUntil, tap } from 'rxjs';
-import { match } from '../../utils/pattern-matching';
-import { TradingViewPacketType } from '../../enums/trading-view-packet-type';
-import { TradingViewWebSocketPacket } from '../../interfaces/trading-view/trading-view-web-socket-packet.interface';
-import { Market } from '../../models/trading-view/market.model';
-import { RxMap } from '../../classes/rx-map';
-import { PricePeriod } from '../../models/trading-view/price-period.model';
+import { match } from '../utils/pattern-matching';
+import { TradingViewPacketType } from '../enums/trading-view-packet-type';
+import { TradingViewWebSocketPacket } from '../interfaces/trading-view/trading-view-web-socket-packet.interface';
+import { Market } from '../models/trading-view/market.model';
+import { RxMap } from '../classes/rx-map';
+import { PricePeriod } from '../models/trading-view/price-period.model';
 
 @Injectable({
   providedIn: 'root'
