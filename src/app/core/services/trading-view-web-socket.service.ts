@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import {
   TradingViewWebSocketPacket,
   TradingViewWebSocketResponse
-} from '../interfaces/trading-view/trading-view-web-socket-packet.interface';
+} from '../../interfaces/trading-view/trading-view-web-socket-packet.interface';
 
 const cleanerRgx = /~h~/g;
 const splitterRgx = /~m~[0-9]+~m~/g;

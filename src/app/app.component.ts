@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { TradingViewService } from './services/trading-view.service';
+import { TradingViewApiService } from './core/services/trading-view-api.service';
 
 const symbols = [
   'MOEX:AFKS',
@@ -63,6 +63,13 @@ export class AppComponent {
   title = 'trading-assistant';
 
   public stocksWatchers = symbols.map(symbol => this.tradingViewService.watch(symbol));
+  public extremeVolumeNotifications$ = this.tradingViewService.extremeVolumeNotifications$;
 
-  constructor(private tradingViewService: TradingViewService) {}
+  constructor(private tradingViewService: TradingViewApiService) {
+    tradingViewService.initMarkets(symbols);
+  }
+
+  public getPercentageChangeColor(percentage: string): string {
+    return percentage[0] === '-' ? 'red' : 'green';
+  }
 }

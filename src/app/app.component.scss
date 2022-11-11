@@ -1,12 +1,13 @@
 .container {
-  padding: 20px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  gap: 32px;
 }
 
 table {
   color: rgb(166, 189, 213);
-}
-
-tbody tr {
+  height: 100%;
   cursor: pointer;
 }
 
@@ -20,11 +21,15 @@ tr:nth-child(even) {
 
 tr:hover {
   color: rgba(179, 199, 219, 1);
+  background-color: rgba(44, 60, 75, 1);
 }
 
 th {
   width: 100px;
   background-color: rgb(36, 52, 66);
+  position: sticky;
+  top: 0;
+  user-select: none;
 }
 
 th, td {

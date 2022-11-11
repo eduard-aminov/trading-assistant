@@ -1,0 +1,14 @@
+<table>
+  <thead>
+  <th>Название</th>
+  <th>Цена</th>
+  <th>Изм. в %</th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let market of markets$ | async">
+    <td>{{market.icon}} {{market.name}}</td>
+    <td>{{market.price}}</td>
+    <td>{{market.dayPercentageChange}}</td>
+  </tr>
+  </tbody>
+</table>
