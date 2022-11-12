@@ -7,8 +7,9 @@
   <tbody>
   <tr *ngFor="let market of markets$ | async">
     <td>{{market.icon}} {{market.name}}</td>
-    <td>{{market.price}}</td>
-    <td>{{market.dayPercentageChange}}</td>
+    <td>{{market.price || '—'}}</td>
+    <td>{{market.dayPercentageChange || '—'}}</td>
   </tr>
+  <div class="scroll-bar-track"></div>
   </tbody>
 </table>
