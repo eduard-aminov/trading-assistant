@@ -1,4 +1,4 @@
-export const markets = [
+export const symbols = [
   'AFKS',
   'AFLT',
   'AGRO',

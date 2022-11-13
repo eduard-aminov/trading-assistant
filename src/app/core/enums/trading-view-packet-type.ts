@@ -9,4 +9,7 @@ export enum TradingViewPacketType {
   TimescaleUpdate = 'timescale_update',
   SeriesCompleted = 'series_completed',
   Du = 'du',
+  QuoteCreateSession = 'quote_create_session',
+  QuoteSetFields = 'quote_set_fields',
+  QuoteAddSymbols = 'quote_add_symbols',
 }

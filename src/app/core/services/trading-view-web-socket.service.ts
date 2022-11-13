@@ -4,6 +4,7 @@ import {
   TradingViewWebSocketPacket,
   TradingViewWebSocketResponse
 } from '../interfaces/trading-view-web-socket-packet.interface';
+import { TradingViewPacketType } from '../enums/trading-view-packet-type';
 
 const cleanerRgx = /~h~/g;
 const splitterRgx = /~m~[0-9]+~m~/g;
@@ -14,11 +15,13 @@ const splitterRgx = /~m~[0-9]+~m~/g;
 export class TradingViewWebSocketService {
   private readonly channel = new WebSocket(`wss://data.tradingview.com/socket.io/websocket`);
 
+  private _authorized$ = new Subject<void>();
   private _onChannelOpen$ = new Subject<Event>();
   private _onChannelClose$ = new Subject<CloseEvent>();
   private _onChannelMessage$ = new Subject<MessageEvent<TradingViewWebSocketPacket[]>>();
   private _onChannelError$ = new Subject<Event>();
 
+  public authorized$ = this._authorized$.asObservable();
   public onChannelOpen$ = this._onChannelOpen$.asObservable();
   public onChannelClose$ = this._onChannelClose$.asObservable();
   public onChannelMessage$ = this._onChannelMessage$.asObservable();
@@ -26,6 +29,10 @@ export class TradingViewWebSocketService {
 
   constructor() {
     this.channel.onopen = (event: Event) => {
+      this.send({
+        m: TradingViewPacketType.SetAuthToken,
+        p: ['unauthorized_user_token'] as any,
+      });
       this._onChannelOpen$.next(event);
     };
 
@@ -38,6 +45,10 @@ export class TradingViewWebSocketService {
       if (this.isPingPacket(parsedPacket)) {
         this.pong(parsedPacket);
       } else {
+        if ((parsedPacket as any)[0]['session_id']) {
+          this._authorized$.next();
+        }
+
         this._onChannelMessage$.next({...event, data: parsedPacket});
       }
     };

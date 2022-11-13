@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { MarketListWidgetFacadeService } from './services/market-list-widget.facade.service';
-import { markets } from '../core/mocks/markets.mock';
+import { symbols } from '../core/mocks/symbols.mock';
+import { first } from 'rxjs';
 
 @Component({
   selector: 'app-market-list-widget',
@@ -14,9 +15,11 @@ export class MarketListWidgetComponent implements OnInit {
 
   constructor(
     @Inject(MarketListWidgetFacadeService) private facade: MarketListWidgetFacadeService,
-  ) {}
+  ) {
+    facade.runWebsocketServices().subscribe();
+  }
 
   ngOnInit(): void {
-    this.facade.loadMarkets(markets).subscribe();
+    this.facade.loadMarkets(symbols).pipe(first()).subscribe();
   }
 }

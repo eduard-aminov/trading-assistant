@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 import { MarketListWidgetStoreService } from './market-list-widget.store.service';
 import { MarketListWidgetApiService } from './market-list-widget.api.service';
-import { forkJoin, map, Observable } from 'rxjs';
+import { combineLatest, forkJoin, map, Observable, tap } from 'rxjs';
 import { MarketListWidgetWebsocketService } from './market-list-widget.websocket.service';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Injectable()
 export class MarketListWidgetFacadeService {
@@ -12,14 +13,22 @@ export class MarketListWidgetFacadeService {
   constructor(
     @Inject(MarketListWidgetStoreService) private store: MarketListWidgetStoreService,
     @Inject(MarketListWidgetApiService) private api: MarketListWidgetApiService,
-    @Inject(MarketListWidgetWebsocketService) webSocket: MarketListWidgetWebsocketService,
-  ) {
-    webSocket.run();
+    @Inject(MarketListWidgetWebsocketService) private webSocket: MarketListWidgetWebsocketService,
+  ) {}
+
+  public runWebsocketServices(): Observable<boolean> {
+    return combineLatest([
+      this.webSocket.run(),
+      this.api.run(),
+    ]).pipe(
+      map(() => true),
+      distinctUntilChanged(),
+    );
   }
 
   public loadMarkets(symbols: string[]): Observable<boolean> {
     return forkJoin(
-      symbols.map(symbol => this.api.loadMarket(symbol))
+      symbols.map(symbol => this.api.loadSymbolData(symbol, ['lp'])),
     ).pipe(
       map(() => true)
     );
