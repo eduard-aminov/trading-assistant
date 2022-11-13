@@ -1,4 +1,4 @@
-import { BehaviorSubject, filter, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 
 export abstract class Store<State> {
@@ -18,7 +18,6 @@ export abstract class Store<State> {
   select<T extends keyof State>(key: T): Observable<State[T]> {
     return this.state$.pipe(
       map(item => item[key]),
-      filter(v => !!v),
       distinctUntilChanged(),
     );
   }

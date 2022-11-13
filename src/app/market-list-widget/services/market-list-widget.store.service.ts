@@ -5,7 +5,7 @@ import { MarketListWidgetItem } from '../models/market-list-widget.model';
 
 const initialState: MarketListWidgetState = {
   markets: [],
-  isMarketsLoading: false,
+  isMarketsLoading: true,
   isMarketsEmpty: true,
 };
 

@@ -5,11 +5,9 @@
 }
 
 table {
-
   display: block;
   color: rgb(166, 189, 213);
   height: 100%;
-  cursor: pointer;
   width: 300px;
   overflow-y: auto;
 
@@ -20,6 +18,7 @@ table {
   thead {
     display: table;
     width: 100%;
+    height: 30px;
     position: sticky;
     top: 0;
     user-select: none;
@@ -33,24 +32,24 @@ table {
       text-align: right;
       padding: 5px;
       background-color: rgb(36, 52, 66);
+      cursor: pointer;
     }
   }
 
   tbody {
     display: table;
     width: 100%;
+    height: calc(100% - 30px);
+    background-color: rgb(36, 52, 66);
 
     tr {
       display: table;
       width: 100%;
       table-layout: fixed;
+      cursor: pointer;
 
       &:nth-child(odd) {
         background-color: rgb(33, 43, 63);
-      }
-
-      &:nth-child(even) {
-        background-color: rgb(36, 52, 66);
       }
 
       &:nth-child(even) {
@@ -72,4 +71,12 @@ table {
       }
     }
   }
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }

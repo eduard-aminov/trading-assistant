@@ -8,6 +8,7 @@ import { WIDGET_NAME_TOKEN } from '../../core/tokens/widget-name.token';
 import { TradingViewWebSocketMessagePacketType } from '../../core/enums/trading-view-packet-type';
 import { TradingViewWebSocketQsdPacketData } from '../../core/interfaces/trading-view-web-socket-packet.interface';
 import { MarketListWidgetItem } from '../models/market-list-widget.model';
+import { removeFalsyPropValueFromObject } from '../../core/utils/remove-falsy-props-from-object';
 
 @Injectable()
 export class MarketListWidgetWebsocketService {
@@ -32,8 +33,14 @@ export class MarketListWidgetWebsocketService {
 
   private onQsd(message: TradingViewWebSocketMessage): void {
     const data = message.data as TradingViewWebSocketQsdPacketData;
-    const market = new MarketListWidgetItem(data);
-    this.store.updateOrAddMarket(market);
+    const newMarket = new MarketListWidgetItem(data);
+    const existMarket = this.store.stateSnapshot.markets.find(item => item.name === newMarket.name);
+
+    if (existMarket) {
+      this.store.updateMarket({...existMarket, ...removeFalsyPropValueFromObject(newMarket)});
+    } else {
+      this.store.addMarket(newMarket);
+    }
   }
 
   // private onSymbolResolved(message: TradingViewWebSocketMessage): void {

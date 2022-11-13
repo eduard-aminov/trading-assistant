@@ -9,12 +9,12 @@ import { MarketListWidgetModule } from './market-list-widget/market-list-widget.
   declarations: [
     AppComponent,
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        MarketListWidgetModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    MarketListWidgetModule
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

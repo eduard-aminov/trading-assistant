@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { MarketListWidgetStoreService } from './market-list-widget.store.service';
 import { MarketListWidgetApiService } from './market-list-widget.api.service';
-import { combineLatest, forkJoin, map, Observable, tap } from 'rxjs';
+import { combineLatest, finalize, map, Observable, switchMap, takeWhile } from 'rxjs';
 import { MarketListWidgetWebsocketService } from './market-list-widget.websocket.service';
 import { distinctUntilChanged } from 'rxjs/operators';
 
@@ -9,6 +9,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
 export class MarketListWidgetFacadeService {
 
   public readonly markets$ = this.store.select('markets');
+  public readonly isMarketsLoading$ = this.store.select('isMarketsLoading');
 
   constructor(
     @Inject(MarketListWidgetStoreService) private store: MarketListWidgetStoreService,
@@ -27,9 +28,10 @@ export class MarketListWidgetFacadeService {
   }
 
   public loadMarkets(symbols: string[]): Observable<boolean> {
-    return forkJoin(
-      symbols.map(symbol => this.api.loadSymbolData(symbol, ['lp', 'short_name'])),
-    ).pipe(
+    return this.api.loadSymbolsData(symbols).pipe(
+      switchMap(() => this.store.select('markets')),
+      takeWhile(markets => markets.length < symbols.length),
+      finalize(() => this.store.setState({isMarketsLoading: false})),
       map(() => true)
     );
   }
