@@ -34,7 +34,7 @@ export class MarketListWidgetWebsocketService {
   private onQsd(message: TradingViewWebSocketMessage): void {
     const data = message.data as TradingViewWebSocketQsdPacketData;
     const newMarket = new MarketListWidgetItem(data);
-    const existMarket = this.store.stateSnapshot.markets.find(item => item.name === newMarket.name);
+    const existMarket = this.store.stateSnapshot.markets.find(item => item.symbol === newMarket.symbol);
 
     if (existMarket) {
       this.store.updateMarket({...existMarket, ...removeFalsyPropValueFromObject(newMarket)});
@@ -42,16 +42,4 @@ export class MarketListWidgetWebsocketService {
       this.store.addMarket(newMarket);
     }
   }
-
-  // private onSymbolResolved(message: TradingViewWebSocketMessage): void {
-  //   const data = message.data as TradingViewWebSocketSymbolResolvedPacketData;
-  //   const market = new MarketListWidgetItem(data);
-  //   this.store.addMarket(market);
-  // }
-
-  // private onDataUpdate(message: TradingViewWebSocketMessage): void {
-  //   const data = message.data as TradingViewWebSocketDUPacketData;
-  // const markets = data.map(item => new MarketListWidgetItem(item))
-  // this.store.setMarkets(markets);
-  // }
 }
