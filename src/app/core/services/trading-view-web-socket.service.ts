@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import {
-  TradingViewWebSocketPacket,
-  TradingViewWebSocketResponse
+  TradingViewWebSocketMessagePacket,
+  TradingViewWebSocketResponse,
+  TradingViewWebSocketSendPacket
 } from '../interfaces/trading-view-web-socket-packet.interface';
-import { TradingViewPacketType } from '../enums/trading-view-packet-type';
+import { TradingViewWebSocketSendPacketType } from '../enums/trading-view-packet-type';
 
 const cleanerRgx = /~h~/g;
 const splitterRgx = /~m~[0-9]+~m~/g;
@@ -18,7 +19,7 @@ export class TradingViewWebSocketService {
   private _authorized$ = new Subject<void>();
   private _onChannelOpen$ = new Subject<Event>();
   private _onChannelClose$ = new Subject<CloseEvent>();
-  private _onChannelMessage$ = new Subject<MessageEvent<TradingViewWebSocketPacket[]>>();
+  private _onChannelMessage$ = new Subject<MessageEvent<TradingViewWebSocketMessagePacket[]>>();
   private _onChannelError$ = new Subject<Event>();
 
   public authorized$ = this._authorized$.asObservable();
@@ -30,7 +31,7 @@ export class TradingViewWebSocketService {
   constructor() {
     this.channel.onopen = (event: Event) => {
       this.send({
-        m: TradingViewPacketType.SetAuthToken,
+        m: TradingViewWebSocketSendPacketType.SetAuthToken,
         p: ['unauthorized_user_token'] as any,
       });
       this._onChannelOpen$.next(event);
@@ -58,14 +59,14 @@ export class TradingViewWebSocketService {
     };
   }
 
-  public send(packet: TradingViewWebSocketPacket | string): void {
+  public send(packet: TradingViewWebSocketSendPacket | string): void {
     if (this.channel.OPEN) {
       const formattedPacket = this.formatPacket(packet);
       this.channel.send(formattedPacket);
     }
   }
 
-  private parsePacket(str: string): TradingViewWebSocketPacket[] {
+  private parsePacket(str: string): TradingViewWebSocketMessagePacket[] {
     return str.replace(cleanerRgx, '')
               .split(splitterRgx)
               .map((p) => {
@@ -82,7 +83,7 @@ export class TradingViewWebSocketService {
               .filter((p) => p);
   };
 
-  private formatPacket(packet: TradingViewWebSocketPacket | string): string {
+  private formatPacket(packet: TradingViewWebSocketSendPacket | string): string {
     const msg = typeof packet === 'object'
                 ? JSON.stringify(packet)
                 : String(packet);

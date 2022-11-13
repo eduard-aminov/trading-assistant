@@ -1,14 +1,25 @@
-import { TradingViewPacketType } from '../enums/trading-view-packet-type';
 import { TradingViewMarket } from './trading-view-market.interface';
+import {
+  TradingViewWebSocketMessagePacketType,
+  TradingViewWebSocketSendPacketType
+} from '../enums/trading-view-packet-type';
 
-export interface TradingViewWebSocketPacket {
-  m: TradingViewPacketType;
+export interface TradingViewWebSocketSendPacket {
+  m: TradingViewWebSocketSendPacketType;
   p: TradingViewWebSocketPacketData;
 }
 
-export type TradingViewWebSocketResponse = (TradingViewWebSocketPacket | number)[];
+export interface TradingViewWebSocketMessagePacket {
+  m: TradingViewWebSocketMessagePacketType;
+  p: TradingViewWebSocketPacketData;
+}
 
-export type TradingViewWebSocketPacketData = TradingViewWebSocketSymbolResolvedPacketData | TradingViewWebSocketDUPacketData;
+export type TradingViewWebSocketResponse = (TradingViewWebSocketMessagePacket | number)[];
+
+export type TradingViewWebSocketPacketData =
+  TradingViewWebSocketSymbolResolvedPacketData |
+  TradingViewWebSocketDUPacketData |
+  TradingViewWebSocketQuoteCompletedPacketData;
 
 export type TradingViewWebSocketSymbolResolvedPacketData = [
   string, // sessionId
@@ -19,4 +30,9 @@ export type TradingViewWebSocketSymbolResolvedPacketData = [
 export type TradingViewWebSocketDUPacketData = [
   string, // sessionId
   { $prices: { s: { v: number[] }[] } }
+];
+
+export type TradingViewWebSocketQuoteCompletedPacketData = [
+  string, // sessionId
+  string, // symbol
 ];

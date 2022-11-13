@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 import { TradingViewWebSocketService } from './trading-view-web-socket.service';
-import { TradingViewPacketType } from '../enums/trading-view-packet-type';
 import { first, map, Observable, switchMap, takeUntil, tap } from 'rxjs';
 import { TradingViewWebSocketMessage } from '../models/trading-view-web-socket-message';
 import { TradingViewTimeframe } from '../interfaces/trading-view.interface';
+import { TradingViewWebSocketSendPacketType } from '../enums/trading-view-packet-type';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,6 @@ export class TradingViewApiService {
     @Inject(TradingViewWebSocketService) private webSocketService: TradingViewWebSocketService
   ) {
     this.messages$ = webSocketService.onChannelOpen$.pipe(
-      // tap(() => this.setUnauthorizedUserToken()),
       switchMap(() => webSocketService.authorized$),
       switchMap(() => webSocketService.onChannelMessage$),
       map(event => event.data.map(message => new TradingViewWebSocketMessage(message))),
@@ -24,19 +23,12 @@ export class TradingViewApiService {
     );
   }
 
-  private setUnauthorizedUserToken(): void {
-    this.webSocketService.send({
-      m: TradingViewPacketType.SetAuthToken,
-      p: ['unauthorized_user_token'] as any,
-    });
-  }
-
   public createSession(sessionId: string): Observable<boolean> {
     return this.webSocketService.authorized$.pipe(
       first(),
       tap(() => {
         this.webSocketService.send({
-          m: TradingViewPacketType.ChartCreateSession,
+          m: TradingViewWebSocketSendPacketType.ChartCreateSession,
           p: [sessionId] as any,
         });
       }),
@@ -49,7 +41,7 @@ export class TradingViewApiService {
       first(),
       tap(() => {
         this.webSocketService.send({
-          m: TradingViewPacketType.ResolveSymbol,
+          m: TradingViewWebSocketSendPacketType.ResolveSymbol,
           p: [
             sessionId,
             `ser_1`,
@@ -69,7 +61,7 @@ export class TradingViewApiService {
       first(),
       tap(() => {
         this.webSocketService.send({
-          m: TradingViewPacketType.CreateSeries,
+          m: TradingViewWebSocketSendPacketType.CreateSeries,
           p: [
             sessionId,
             '$prices',
@@ -89,7 +81,7 @@ export class TradingViewApiService {
       first(),
       tap(() => {
         this.webSocketService.send({
-          m: TradingViewPacketType.QuoteCreateSession,
+          m: TradingViewWebSocketSendPacketType.QuoteCreateSession,
           p: [sessionId] as any,
         });
       }),
@@ -101,7 +93,7 @@ export class TradingViewApiService {
       first(),
       tap(() => {
         this.webSocketService.send({
-          m: TradingViewPacketType.QuoteSetFields,
+          m: TradingViewWebSocketSendPacketType.QuoteSetFields,
           p: [sessionId, ...fields] as any,
         });
       }),
@@ -113,7 +105,7 @@ export class TradingViewApiService {
       first(),
       tap(() => {
         this.webSocketService.send({
-          m: TradingViewPacketType.QuoteAddSymbols,
+          m: TradingViewWebSocketSendPacketType.QuoteAddSymbols,
           p: [sessionId, symbol] as any,
         });
       }),

@@ -3,7 +3,6 @@ import { TradingViewApiService } from '../../core/services/trading-view-api.serv
 import { MarketListWidgetStoreService } from './market-list-widget.store.service';
 import { map, Observable, tap } from 'rxjs';
 import { match } from '../../core/utils/pattern-matching';
-import { TradingViewPacketType } from '../../core/enums/trading-view-packet-type';
 import { TradingViewWebSocketMessage } from '../../core/models/trading-view-web-socket-message';
 import {
   TradingViewWebSocketDUPacketData,
@@ -11,6 +10,7 @@ import {
 } from '../../core/interfaces/trading-view-web-socket-packet.interface';
 import { MarketListWidgetItem } from '../models/market-list-widget.model';
 import { WIDGET_NAME_TOKEN } from '../../core/tokens/widget-name.token';
+import { TradingViewWebSocketMessagePacketType } from '../../core/enums/trading-view-packet-type';
 
 @Injectable()
 export class MarketListWidgetWebsocketService {
@@ -25,9 +25,9 @@ export class MarketListWidgetWebsocketService {
       tap(messages => messages.forEach(message => {
         if (message.sessionId === this.widgetName) {
           match(message.type)
-            .case(TradingViewPacketType.SymbolResolved, () => this.onSymbolResolved(message))
-            .case(TradingViewPacketType.Du, () => this.onDataUpdate(message))
-            .default(() => console.log(message));
+            .case(TradingViewWebSocketMessagePacketType.SymbolResolved, () => this.onSymbolResolved(message))
+            .case(TradingViewWebSocketMessagePacketType.Du, () => this.onDataUpdate(message))
+            .default(console.log(message));
         }
       })),
       map(() => true)
