@@ -3,6 +3,7 @@ import {
   TradingViewWebSocketMessagePacketType,
   TradingViewWebSocketSendPacketType
 } from '../enums/trading-view-packet-type';
+import { TradingViewQuoteData } from './trading-view.interface';
 
 export interface TradingViewWebSocketSendPacket {
   m: TradingViewWebSocketSendPacketType;
@@ -19,7 +20,8 @@ export type TradingViewWebSocketResponse = (TradingViewWebSocketMessagePacket | 
 export type TradingViewWebSocketPacketData =
   TradingViewWebSocketSymbolResolvedPacketData |
   TradingViewWebSocketDUPacketData |
-  TradingViewWebSocketQuoteCompletedPacketData;
+  TradingViewWebSocketQuoteCompletedPacketData |
+  TradingViewWebSocketQsdPacketData;
 
 export type TradingViewWebSocketSymbolResolvedPacketData = [
   string, // sessionId
@@ -35,4 +37,13 @@ export type TradingViewWebSocketDUPacketData = [
 export type TradingViewWebSocketQuoteCompletedPacketData = [
   string, // sessionId
   string, // symbol
+];
+
+export type TradingViewWebSocketQsdPacketData = [
+  string, // sessionId
+  {
+    n: string, // symbol
+    s: string,
+    v: Partial<TradingViewQuoteData>
+  }
 ];

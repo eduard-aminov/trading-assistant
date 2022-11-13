@@ -28,7 +28,7 @@ export class MarketListWidgetFacadeService {
 
   public loadMarkets(symbols: string[]): Observable<boolean> {
     return forkJoin(
-      symbols.map(symbol => this.api.loadSymbolData(symbol, ['lp'])),
+      symbols.map(symbol => this.api.loadSymbolData(symbol, ['lp', 'short_name'])),
     ).pipe(
       map(() => true)
     );

@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { TradingViewApiService } from '../../core/services/trading-view-api.service';
 import { forkJoin, Observable } from 'rxjs';
 import { WIDGET_NAME_TOKEN } from '../../core/tokens/widget-name.token';
+import { TradingViewQuoteFields } from '../../core/interfaces/trading-view.interface';
 
 @Injectable()
 export class MarketListWidgetApiService {
@@ -14,7 +15,7 @@ export class MarketListWidgetApiService {
     return this.api.quoteCreateSession(this.widgetName);
   }
 
-  public loadSymbolData(symbol: string, fields: string[]): Observable<void[]> {
+  public loadSymbolData(symbol: string, fields: TradingViewQuoteFields[]): Observable<void[]> {
     return forkJoin([
       this.api.quoteSetFields(this.widgetName, fields),
       this.api.quoteAddSymbols(this.widgetName, symbol),

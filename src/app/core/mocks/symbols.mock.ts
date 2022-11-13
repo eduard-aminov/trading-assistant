@@ -1,4 +1,7 @@
 export const symbols = [
+  'BTCUSDT',
+  'ETCUSDT',
+  'ETHUSDT',
   'AFKS',
   'AFLT',
   'AGRO',

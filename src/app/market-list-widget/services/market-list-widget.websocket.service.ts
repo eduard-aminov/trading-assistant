@@ -4,13 +4,10 @@ import { MarketListWidgetStoreService } from './market-list-widget.store.service
 import { map, Observable, tap } from 'rxjs';
 import { match } from '../../core/utils/pattern-matching';
 import { TradingViewWebSocketMessage } from '../../core/models/trading-view-web-socket-message';
-import {
-  TradingViewWebSocketDUPacketData,
-  TradingViewWebSocketSymbolResolvedPacketData
-} from '../../core/interfaces/trading-view-web-socket-packet.interface';
-import { MarketListWidgetItem } from '../models/market-list-widget.model';
 import { WIDGET_NAME_TOKEN } from '../../core/tokens/widget-name.token';
 import { TradingViewWebSocketMessagePacketType } from '../../core/enums/trading-view-packet-type';
+import { TradingViewWebSocketQsdPacketData } from '../../core/interfaces/trading-view-web-socket-packet.interface';
+import { MarketListWidgetItem } from '../models/market-list-widget.model';
 
 @Injectable()
 export class MarketListWidgetWebsocketService {
@@ -25,24 +22,29 @@ export class MarketListWidgetWebsocketService {
       tap(messages => messages.forEach(message => {
         if (message.sessionId === this.widgetName) {
           match(message.type)
-            .case(TradingViewWebSocketMessagePacketType.SymbolResolved, () => this.onSymbolResolved(message))
-            .case(TradingViewWebSocketMessagePacketType.Du, () => this.onDataUpdate(message))
-            .default(console.log(message));
+            .case(TradingViewWebSocketMessagePacketType.Qsd, () => this.onQsd(message))
+            .default();
         }
       })),
       map(() => true)
     );
   }
 
-  private onSymbolResolved(message: TradingViewWebSocketMessage): void {
-    const data = message.data as TradingViewWebSocketSymbolResolvedPacketData;
+  private onQsd(message: TradingViewWebSocketMessage): void {
+    const data = message.data as TradingViewWebSocketQsdPacketData;
     const market = new MarketListWidgetItem(data);
-    this.store.addMarket(market);
+    this.store.updateOrAddMarket(market);
   }
 
-  private onDataUpdate(message: TradingViewWebSocketMessage): void {
-    const data = message.data as TradingViewWebSocketDUPacketData;
-    // const markets = data.map(item => new MarketListWidgetItem(item))
-    // this.store.setMarkets(markets);
-  }
+  // private onSymbolResolved(message: TradingViewWebSocketMessage): void {
+  //   const data = message.data as TradingViewWebSocketSymbolResolvedPacketData;
+  //   const market = new MarketListWidgetItem(data);
+  //   this.store.addMarket(market);
+  // }
+
+  // private onDataUpdate(message: TradingViewWebSocketMessage): void {
+  //   const data = message.data as TradingViewWebSocketDUPacketData;
+  // const markets = data.map(item => new MarketListWidgetItem(item))
+  // this.store.setMarkets(markets);
+  // }
 }

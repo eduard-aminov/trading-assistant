@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { TradingViewWebSocketService } from './trading-view-web-socket.service';
 import { first, map, Observable, switchMap, takeUntil, tap } from 'rxjs';
 import { TradingViewWebSocketMessage } from '../models/trading-view-web-socket-message';
-import { TradingViewTimeframe } from '../interfaces/trading-view.interface';
+import { TradingViewQuoteFields, TradingViewTimeframe } from '../interfaces/trading-view.interface';
 import { TradingViewWebSocketSendPacketType } from '../enums/trading-view-packet-type';
 
 @Injectable({
@@ -88,7 +88,7 @@ export class TradingViewApiService {
     );
   }
 
-  public quoteSetFields(sessionId: string, fields: string[]): Observable<void> {
+  public quoteSetFields(sessionId: string, fields: TradingViewQuoteFields[]): Observable<void> {
     return this.webSocketService.authorized$.pipe(
       first(),
       tap(() => {

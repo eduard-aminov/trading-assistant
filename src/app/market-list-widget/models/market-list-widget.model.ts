@@ -1,6 +1,4 @@
-import {
-  TradingViewWebSocketSymbolResolvedPacketData
-} from '../../core/interfaces/trading-view-web-socket-packet.interface';
+import { TradingViewWebSocketQsdPacketData } from '../../core/interfaces/trading-view-web-socket-packet.interface';
 
 export class MarketListWidgetItem {
   icon?: string;
@@ -8,10 +6,12 @@ export class MarketListWidgetItem {
   price?: number;
   dayPercentageChange?: number;
 
-  constructor(data: TradingViewWebSocketSymbolResolvedPacketData) {
+  constructor(data: TradingViewWebSocketQsdPacketData) {
+    const symbol = data[1].n;
+    const quoteData = data[1].v;
     this.icon = '';
-    this.name = data[2].name;
-    this.price = 0;
+    this.name = symbol ?? '';
+    this.price = quoteData?.lp;
     this.dayPercentageChange = 0;
   }
 }
