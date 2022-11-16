@@ -5,7 +5,7 @@ export type TradingViewTimeframe =
 
 export interface TradingViewQuoteData {
   'base-currency-logoid': string;
-  ch: string;
+  ch: number;
   chp: number;
   'currency-logoid': string;
   currency_code: string;

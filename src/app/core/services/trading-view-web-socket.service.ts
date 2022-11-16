@@ -6,6 +6,7 @@ import {
   TradingViewWebSocketSendPacket
 } from '../interfaces/trading-view-web-socket-packet.interface';
 import { TradingViewWebSocketSendPacketType } from '../enums/trading-view-packet-type';
+import { environment } from '../../../environments/environment';
 
 const cleanerRgx = /~h~/g;
 const splitterRgx = /~m~[0-9]+~m~/g;
@@ -32,7 +33,7 @@ export class TradingViewWebSocketService {
     this.channel.onopen = (event: Event) => {
       this.send({
         m: TradingViewWebSocketSendPacketType.SetAuthToken,
-        p: ['unauthorized_user_token'] as any,
+        p: [environment.TRADING_VIEW_AUTH_TOKEN] as any,
       });
       this._onChannelOpen$.next(event);
     };

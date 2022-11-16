@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 import { MarketListWidgetFacadeService } from './services/market-list-widget.facade.service';
 import { symbols } from '../core/mocks/symbols.mock';
 import { tap } from 'rxjs';
+import { TelegramBotApiService } from '../core/services/telegram-bot-api.service';
 
 @Component({
   selector: 'app-market-list-widget',
@@ -16,7 +17,10 @@ export class MarketListWidgetComponent implements OnInit {
 
   constructor(
     @Inject(MarketListWidgetFacadeService) private facade: MarketListWidgetFacadeService,
+    private tg: TelegramBotApiService,
   ) {
+    // tg.getUpdates().subscribe();
+    // tg.sendMessage('228547762', 'Привет, яратканымочка мой!').subscribe();
     facade.runWebsocketServices().subscribe();
   }
 

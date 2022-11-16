@@ -44,7 +44,7 @@ export class TradingViewApiService {
           m: TradingViewWebSocketSendPacketType.ResolveSymbol,
           p: [
             sessionId,
-            `ser_1`,
+            seriesId,
             `=${JSON.stringify({
               symbol,
               adjustment: 'splits'
@@ -57,7 +57,7 @@ export class TradingViewApiService {
   }
 
   public createSeries(symbol: string, sessionId: string, seriesId: string, timeframe: TradingViewTimeframe, range: number): Observable<boolean> {
-    return this.webSocketService.onChannelOpen$.pipe(
+    return this.webSocketService.authorized$.pipe(
       first(),
       tap(() => {
         this.webSocketService.send({
@@ -95,6 +95,18 @@ export class TradingViewApiService {
         this.webSocketService.send({
           m: TradingViewWebSocketSendPacketType.QuoteSetFields,
           p: [sessionId, ...fields] as any,
+        });
+      }),
+    );
+  }
+
+  public quoteFastSymbols(sessionId: string): Observable<void> {
+    return this.webSocketService.authorized$.pipe(
+      first(),
+      tap(() => {
+        this.webSocketService.send({
+          m: TradingViewWebSocketSendPacketType.QuoteFastSymbols,
+          p: [sessionId] as any,
         });
       }),
     );
