@@ -6,6 +6,7 @@ export enum TradingViewWebSocketSendPacketType {
   QuoteCreateSession = 'quote_create_session',
   QuoteSetFields = 'quote_set_fields',
   QuoteAddSymbols = 'quote_add_symbols',
+  QuoteRemoveSymbols = 'quote_remove_symbols',
   QuoteFastSymbols = 'quote_fast_symbols',
 }
 

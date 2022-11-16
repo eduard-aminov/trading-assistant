@@ -123,4 +123,16 @@ export class TradingViewApiService {
       }),
     );
   }
+
+  public quoteRemoveSymbols(sessionId: string, symbols: string[]): Observable<void> {
+    return this.webSocketService.authorized$.pipe(
+      first(),
+      tap(() => {
+        this.webSocketService.send({
+          m: TradingViewWebSocketSendPacketType.QuoteRemoveSymbols,
+          p: [sessionId, ...symbols] as any,
+        });
+      }),
+    );
+  }
 }

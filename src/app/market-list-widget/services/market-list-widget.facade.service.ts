@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { MarketListWidgetStoreService } from './market-list-widget.store.service';
 import { MarketListWidgetApiService } from './market-list-widget.api.service';
-import { combineLatest, finalize, map, Observable, switchMap, takeWhile } from 'rxjs';
+import { combineLatest, EMPTY, finalize, map, Observable, switchMap, takeWhile } from 'rxjs';
 import { MarketListWidgetWebsocketService } from './market-list-widget.websocket.service';
 import { distinctUntilChanged } from 'rxjs/operators';
 
@@ -17,13 +17,12 @@ export class MarketListWidgetFacadeService {
     @Inject(MarketListWidgetWebsocketService) private webSocket: MarketListWidgetWebsocketService,
   ) {}
 
-  public runWebsocketServices(): Observable<boolean> {
+  public runWebsocketServices(): Observable<void> {
     return combineLatest([
       this.webSocket.run(),
       this.api.run(),
     ]).pipe(
-      map(() => true),
-      distinctUntilChanged(),
+      switchMap(() => EMPTY),
     );
   }
 
