@@ -15,7 +15,7 @@ const splitterRgx = /~m~[0-9]+~m~/g;
   providedIn: 'root'
 })
 export class TradingViewWebSocketService {
-  private readonly channel = new WebSocket(`wss://data.tradingview.com/socket.io/websocket`);
+  private readonly channel = new WebSocket(environment.TRADING_VIEW_WS_API_URL);
 
   private _authorized$ = new Subject<void>();
   private _onChannelOpen$ = new Subject<Event>();

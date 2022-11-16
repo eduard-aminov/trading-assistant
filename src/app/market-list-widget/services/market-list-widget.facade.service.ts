@@ -3,7 +3,6 @@ import { MarketListWidgetStoreService } from './market-list-widget.store.service
 import { MarketListWidgetApiService } from './market-list-widget.api.service';
 import { combineLatest, EMPTY, finalize, map, Observable, switchMap, takeWhile } from 'rxjs';
 import { MarketListWidgetWebsocketService } from './market-list-widget.websocket.service';
-import { distinctUntilChanged } from 'rxjs/operators';
 
 @Injectable()
 export class MarketListWidgetFacadeService {

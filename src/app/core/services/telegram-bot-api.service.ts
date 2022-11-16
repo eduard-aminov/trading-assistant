@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 const TOKEN = environment.TELEGRAM_BOT_TOKEN;
-const url = `https://api.telegram.org/bot${TOKEN}`;
+const url = `${environment.TELEGRAM_BOT_API_URL}${TOKEN}`;
 
 @Injectable({
   providedIn: 'root'
