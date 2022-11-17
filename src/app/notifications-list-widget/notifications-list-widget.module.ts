@@ -4,7 +4,6 @@ import { NotificationsListWidgetComponent } from './notifications-list-widget.co
 import { NotificationsListWidgetStoreService } from './services/notifications-list-widget.store.service';
 import { NotificationsListWidgetFacadeService } from './services/notifications-list-widget.facade.service';
 import { NotificationsListWidgetApiService } from './services/notifications-list-widget.api.service';
-import { NotificationsListWidgetWebsocketService } from './services/notifications-list-widget.websocket.service';
 
 @NgModule({
   declarations: [
@@ -15,7 +14,6 @@ import { NotificationsListWidgetWebsocketService } from './services/notification
   ],
   providers: [
     NotificationsListWidgetApiService,
-    NotificationsListWidgetWebsocketService,
     NotificationsListWidgetStoreService,
     NotificationsListWidgetFacadeService,
   ],

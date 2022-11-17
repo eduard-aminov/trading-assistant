@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { MarketListWidgetStoreService } from './market-list-widget.store.service';
 import { MarketListWidgetApiService } from './market-list-widget.api.service';
-import { combineLatest, EMPTY, finalize, map, Observable, switchMap, takeWhile } from 'rxjs';
-import { MarketListWidgetWebsocketService } from './market-list-widget.websocket.service';
+import { finalize, map, Observable, switchMap, takeWhile } from 'rxjs';
 
 @Injectable()
 export class MarketListWidgetFacadeService {
@@ -13,16 +12,10 @@ export class MarketListWidgetFacadeService {
   constructor(
     @Inject(MarketListWidgetStoreService) private store: MarketListWidgetStoreService,
     @Inject(MarketListWidgetApiService) private api: MarketListWidgetApiService,
-    @Inject(MarketListWidgetWebsocketService) private webSocket: MarketListWidgetWebsocketService,
   ) {}
 
-  public runWebsocketServices(): Observable<void> {
-    return combineLatest([
-      this.webSocket.run(),
-      this.api.run(),
-    ]).pipe(
-      switchMap(() => EMPTY),
-    );
+  public runWebsocketApi(): Observable<boolean> {
+    return this.api.run();
   }
 
   public loadMarkets(symbols: string[]): Observable<boolean> {

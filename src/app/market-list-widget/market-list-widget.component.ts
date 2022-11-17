@@ -20,7 +20,7 @@ export class MarketListWidgetComponent implements OnInit {
     @Inject(MarketListWidgetFacadeService) private facade: MarketListWidgetFacadeService,
     @Inject(DestroyService) private destroy$: DestroyService,
   ) {
-    facade.runWebsocketServices().pipe(
+    facade.runWebsocketApi().pipe(
       takeUntil(this.destroy$)
     ).subscribe();
   }
