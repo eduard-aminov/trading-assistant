@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { TradingViewApiService } from '../../core/services/trading-view-api.service';
-import { MarketListWidgetStoreService } from './market-list-widget.store.service';
+import { NotificationsListWidgetStoreService } from './notifications-list-widget.store.service';
 import { map, Observable, tap } from 'rxjs';
 import { match } from '../../core/utils/pattern-matching';
 import { TradingViewWebSocketMessage } from '../../core/models/trading-view-web-socket-message';
@@ -10,14 +10,13 @@ import {
   TradingViewWebSocketCriticalErrorPacketData,
   TradingViewWebSocketQsdPacketData
 } from '../../core/interfaces/trading-view-web-socket-packet.interface';
-import { MarketListWidgetItem } from '../models/market-list-widget.model';
-import { removeFalsyPropValueFromObject } from '../../core/utils/remove-falsy-props-from-object';
+import { NotificationsListWidgetItem } from '../models/notifications-list-widget.model';
 
 @Injectable()
-export class MarketListWidgetWebsocketService {
+export class NotificationsListWidgetWebsocketService {
   constructor(
     @Inject(TradingViewApiService) private api: TradingViewApiService,
-    @Inject(MarketListWidgetStoreService) private store: MarketListWidgetStoreService,
+    @Inject(NotificationsListWidgetStoreService) private store: NotificationsListWidgetStoreService,
     @Inject(WIDGET_NAME_TOKEN) private widgetName: string,
   ) {}
 
@@ -37,14 +36,8 @@ export class MarketListWidgetWebsocketService {
 
   private onQsd(message: TradingViewWebSocketMessage): void {
     const data = message.data as TradingViewWebSocketQsdPacketData;
-    const newMarket = new MarketListWidgetItem(data);
-    const existMarket = this.store.stateSnapshot.markets.find(item => item.symbol === newMarket.symbol);
-
-    if (existMarket) {
-      this.store.updateMarket({...existMarket, ...removeFalsyPropValueFromObject(newMarket)});
-    } else {
-      this.store.addMarket(newMarket);
-    }
+    const notification = new NotificationsListWidgetItem(data);
+    this.store.addNotification(notification);
   }
 
   private onCriticalError(message: TradingViewWebSocketMessage): void {

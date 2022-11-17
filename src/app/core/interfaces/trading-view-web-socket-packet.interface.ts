@@ -21,7 +21,8 @@ export type TradingViewWebSocketPacketData =
   TradingViewWebSocketSymbolResolvedPacketData |
   TradingViewWebSocketDUPacketData |
   TradingViewWebSocketQuoteCompletedPacketData |
-  TradingViewWebSocketQsdPacketData;
+  TradingViewWebSocketQsdPacketData |
+  TradingViewWebSocketCriticalErrorPacketData;
 
 export type TradingViewWebSocketSymbolResolvedPacketData = [
   string, // sessionId
@@ -46,4 +47,11 @@ export type TradingViewWebSocketQsdPacketData = [
     s: string,
     v: Partial<TradingViewQuoteData>
   }
+];
+
+
+export type TradingViewWebSocketCriticalErrorPacketData = [
+  string, // sessionId
+  string, // error message
+  string, // seriesId
 ];

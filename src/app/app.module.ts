@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MarketListWidgetModule } from './market-list-widget/market-list-widget.module';
 import { HttpClientModule } from '@angular/common/http';
+import { NotificationsListWidgetModule } from './notifications-list-widget/notifications-list-widget.module';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    NotificationsListWidgetModule,
     MarketListWidgetModule
   ],
   providers: [],

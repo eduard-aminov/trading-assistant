@@ -1,0 +1,16 @@
+<table>
+  <thead>
+  <th>Название</th>
+  </thead>
+  <tbody>
+  <ng-container *ngIf="!(isNotificationsEmpty$ | async) else noDataPlaceholder">
+    <tr *ngFor="let notification of notifications$ | async">
+      <td>{{notification.marketName}}</td>
+    </tr>
+  </ng-container>
+  </tbody>
+</table>
+
+<ng-template #noDataPlaceholder>
+  <div class="no-data-placeholder">Уведомлений нет</div>
+</ng-template>
