@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { NotificationsListWidgetFacadeService } from './services/notifications-list-widget.facade.service';
 import { takeUntil } from 'rxjs';
 import { DestroyService } from '../core/services/destroy.service';
+import { symbols } from '../core/mocks/symbols.mock';
 
 @Component({
   selector: 'app-notifications-list-widget',
@@ -10,7 +11,7 @@ import { DestroyService } from '../core/services/destroy.service';
   providers: [DestroyService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotificationsListWidgetComponent {
+export class NotificationsListWidgetComponent implements OnInit {
 
   public readonly notifications$ = this.facade.notifications$;
   public readonly isNotificationsEmpty$ = this.facade.isNotificationsEmpty$;
@@ -20,6 +21,12 @@ export class NotificationsListWidgetComponent {
     @Inject(DestroyService) private destroy$: DestroyService,
   ) {
     facade.runWebsocketServices().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe();
+  }
+
+  ngOnInit(): void {
+    this.facade.loadMarkets(symbols).pipe(
       takeUntil(this.destroy$)
     ).subscribe();
   }

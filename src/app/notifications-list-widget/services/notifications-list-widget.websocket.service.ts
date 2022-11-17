@@ -4,20 +4,23 @@ import { NotificationsListWidgetStoreService } from './notifications-list-widget
 import { map, Observable, tap } from 'rxjs';
 import { match } from '../../core/utils/pattern-matching';
 import { TradingViewWebSocketMessage } from '../../core/models/trading-view-web-socket-message';
-import { WIDGET_NAME_TOKEN } from '../../core/tokens/widget-name.token';
 import { TradingViewWebSocketMessagePacketType } from '../../core/enums/trading-view-packet-type';
 import {
   TradingViewWebSocketCriticalErrorPacketData,
   TradingViewWebSocketQsdPacketData
 } from '../../core/interfaces/trading-view-web-socket-packet.interface';
 import { NotificationsListWidgetItem } from '../models/notifications-list-widget.model';
+import { TelegramBotApiService } from '../../core/services/telegram-bot-api.service';
 
 @Injectable()
 export class NotificationsListWidgetWebsocketService {
+
+  private widgetName = 'NotificationsListWidget';
+
   constructor(
     @Inject(TradingViewApiService) private api: TradingViewApiService,
+    @Inject(TelegramBotApiService) private telegramBotApi: TelegramBotApiService,
     @Inject(NotificationsListWidgetStoreService) private store: NotificationsListWidgetStoreService,
-    @Inject(WIDGET_NAME_TOKEN) private widgetName: string,
   ) {}
 
   public run(): Observable<boolean> {
@@ -37,7 +40,10 @@ export class NotificationsListWidgetWebsocketService {
   private onQsd(message: TradingViewWebSocketMessage): void {
     const data = message.data as TradingViewWebSocketQsdPacketData;
     const notification = new NotificationsListWidgetItem(data);
-    this.store.addNotification(notification);
+    if (notification.marketPrice) {
+      this.store.addNotification(notification);
+      this.store.setState({isNotificationsEmpty: false});
+    }
   }
 
   private onCriticalError(message: TradingViewWebSocketMessage): void {

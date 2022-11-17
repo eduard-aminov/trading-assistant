@@ -5,9 +5,10 @@ export class NotificationsListWidgetItem {
   marketPrice: number;
 
   constructor(data: TradingViewWebSocketQsdPacketData) {
+    const symbol = data[1].n;
     const quoteData = data[1].v;
 
-    this.marketName = quoteData.short_name ?? 'EMPTY';
+    this.marketName = symbol;
     this.marketPrice = quoteData?.lp ?? 0;
   }
 }

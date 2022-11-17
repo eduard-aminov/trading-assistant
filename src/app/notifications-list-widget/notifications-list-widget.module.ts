@@ -5,7 +5,6 @@ import { NotificationsListWidgetStoreService } from './services/notifications-li
 import { NotificationsListWidgetFacadeService } from './services/notifications-list-widget.facade.service';
 import { NotificationsListWidgetApiService } from './services/notifications-list-widget.api.service';
 import { NotificationsListWidgetWebsocketService } from './services/notifications-list-widget.websocket.service';
-import { WIDGET_NAME_TOKEN } from '../core/tokens/widget-name.token';
 
 @NgModule({
   declarations: [
@@ -19,10 +18,6 @@ import { WIDGET_NAME_TOKEN } from '../core/tokens/widget-name.token';
     NotificationsListWidgetWebsocketService,
     NotificationsListWidgetStoreService,
     NotificationsListWidgetFacadeService,
-    {
-      provide: WIDGET_NAME_TOKEN,
-      useValue: 'NotificationsListWidget',
-    }
   ],
   exports: [
     NotificationsListWidgetComponent

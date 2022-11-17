@@ -1,11 +1,13 @@
 <table>
   <thead>
   <th>Название</th>
+  <th>Цена</th>
   </thead>
   <tbody>
   <ng-container *ngIf="!(isNotificationsEmpty$ | async) else noDataPlaceholder">
     <tr *ngFor="let notification of notifications$ | async">
       <td>{{notification.marketName}}</td>
+      <td>{{notification.marketPrice}}</td>
     </tr>
   </ng-container>
   </tbody>

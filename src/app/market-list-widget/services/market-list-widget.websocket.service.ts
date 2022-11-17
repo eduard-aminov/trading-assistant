@@ -4,7 +4,6 @@ import { MarketListWidgetStoreService } from './market-list-widget.store.service
 import { map, Observable, tap } from 'rxjs';
 import { match } from '../../core/utils/pattern-matching';
 import { TradingViewWebSocketMessage } from '../../core/models/trading-view-web-socket-message';
-import { WIDGET_NAME_TOKEN } from '../../core/tokens/widget-name.token';
 import { TradingViewWebSocketMessagePacketType } from '../../core/enums/trading-view-packet-type';
 import {
   TradingViewWebSocketCriticalErrorPacketData,
@@ -15,10 +14,12 @@ import { removeFalsyPropValueFromObject } from '../../core/utils/remove-falsy-pr
 
 @Injectable()
 export class MarketListWidgetWebsocketService {
+
+  private widgetName = 'MarketListWidget';
+
   constructor(
     @Inject(TradingViewApiService) private api: TradingViewApiService,
     @Inject(MarketListWidgetStoreService) private store: MarketListWidgetStoreService,
-    @Inject(WIDGET_NAME_TOKEN) private widgetName: string,
   ) {}
 
   public run(): Observable<boolean> {
