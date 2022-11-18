@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { NotificationsListWidgetFacadeService } from './services/notifications-list-widget.facade.service';
-import { filter, map, switchMap, takeUntil, tap } from 'rxjs';
+import { filter, map, switchMap, takeUntil } from 'rxjs';
 import { DestroyService } from '../core/services/destroy.service';
 import { symbols } from '../core/mocks/symbols.mock';
 import { TelegramBotApiService } from '../core/services/telegram-bot-api.service';
@@ -40,7 +40,10 @@ export class NotificationsListWidgetComponent implements OnInit {
       filter(isPresent),
       switchMap(notification => this.telegramBotApi.sendMessage(
         TELEGRAM_USER_ID,
-        `${notification!.marketName} - ${new Money(notification!.volumeTotalSum, notification!.marketCurrency!).value}`)
+        `${notification!.marketName} - ${
+          new Money(notification!.marketCurrency!)
+            .from(notification!.volumeTotalSum)
+        }`)
       ),
       takeUntil(this.destroy$)
     ).subscribe();

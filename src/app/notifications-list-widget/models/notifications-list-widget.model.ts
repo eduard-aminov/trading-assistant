@@ -26,7 +26,7 @@ export class NotificationsListWidgetNotification {
   constructor(market: NotificationsListWidgetMarket & { volumeTotalSum: number }) {
     const now = new Date();
     this.marketName = market.name;
-    this.marketCurrency = market.currency;
+    this.marketCurrency = market.currency === 'USDT' ? 'USD' : market.currency; //TODO
     this.time = `${now.getHours()}:${now.getMinutes()}`;
     this.volumeTotalSum = market.volumeTotalSum;
   }

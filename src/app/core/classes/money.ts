@@ -1,26 +1,28 @@
 const currencyMap = new Map(Object.entries({
-  RUB: '₽',
-  USD: '$',
-  EUR: '€',
+  RUB: {symbol: '₽', locales: 'ru'},
+  USD: {symbol: '$', locales: 'en'},
+  EUR: {symbol: '€', locales: 'de'},
 }));
 
 export class Money {
-  private readonly _value: string;
   private readonly _currency: string;
 
-  constructor(num: number, currency: string) {
+  constructor(currency: string) {
     if (!currencyMap.has(currency)) {
       throw new Error(`Invalid currency: ${currency}`);
     }
 
     this._currency = currency;
-    this._value = new Intl.NumberFormat('ru', {
-      currency,
-      useGrouping: true,
-    }).format(num);
   }
 
-  public get value(): string {
-    return `${this._value} ${currencyMap.get(this._currency)}`;
+  public from(num: number): string {
+    const currency = currencyMap.get(this._currency)!;
+
+    new Intl.NumberFormat(currency.locales, {
+      currency: this._currency,
+      useGrouping: true,
+    }).format(num);
+
+    return `${num} ${currency.symbol}`;
   }
 }
