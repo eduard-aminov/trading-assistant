@@ -2,6 +2,7 @@ import { TradingViewWebSocketQsdPacketData } from '../../core/interfaces/trading
 
 export class NotificationsListWidgetMarket {
   name: string;
+  currency: string | null;
   price: number;
   volume: number;
 
@@ -11,19 +12,22 @@ export class NotificationsListWidgetMarket {
 
     this.name = symbol;
     this.price = quoteData?.lp ?? 0;
+    this.currency = quoteData?.currency_code ?? null;
     this.volume = Math.round(quoteData?.volume ?? 0);
   }
 }
 
 export class NotificationsListWidgetNotification {
   marketName: string;
+  marketCurrency: string | null;
   time: string;
-  totalSum: number;
+  volumeTotalSum: number;
 
-  constructor(data: TradingViewWebSocketQsdPacketData, totalSum: number) {
+  constructor(market: NotificationsListWidgetMarket & { volumeTotalSum: number }) {
     const now = new Date();
-    this.marketName = data[1].n ?? '';
+    this.marketName = market.name;
+    this.marketCurrency = market.currency;
     this.time = `${now.getHours()}:${now.getMinutes()}`;
-    this.totalSum = totalSum;
+    this.volumeTotalSum = market.volumeTotalSum;
   }
 }

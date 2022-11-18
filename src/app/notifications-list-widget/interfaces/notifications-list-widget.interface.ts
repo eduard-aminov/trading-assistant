@@ -8,4 +8,5 @@ export interface NotificationsListWidgetState {
   notifications: NotificationsListWidgetNotification[];
   isNotificationsLoading: boolean;
   isNotificationsEmpty: boolean;
+  extremeVolumeTriggerTotalSum: number;
 }

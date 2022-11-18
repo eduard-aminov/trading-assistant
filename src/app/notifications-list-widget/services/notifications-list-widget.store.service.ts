@@ -11,6 +11,7 @@ const initialState: NotificationsListWidgetState = {
   notifications: [],
   isNotificationsLoading: true,
   isNotificationsEmpty: true,
+  extremeVolumeTriggerTotalSum: 5000000,
 };
 
 @Injectable()

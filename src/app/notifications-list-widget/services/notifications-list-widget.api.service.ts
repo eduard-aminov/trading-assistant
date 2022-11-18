@@ -30,7 +30,7 @@ export class NotificationsListWidgetApiService {
   }
 
   public run(): Observable<boolean> {
-    const fields = ['lp', 'chp', 'short_name', 'volume'];
+    const fields = ['lp', 'chp', 'short_name', 'volume', 'currency_code'];
     return combineLatest([
       this.api.messages$,
       this.api.quoteCreateSession(this.widgetName),
@@ -56,21 +56,26 @@ export class NotificationsListWidgetApiService {
     const market = new NotificationsListWidgetMarket(data);
     const existMarket = this.store.stateSnapshot.markets.find(item => item.name === market.name);
 
-    if (existMarket?.volume) {
-      const totalSum = Math.floor((Math.floor(market.volume) - Math.floor(existMarket?.volume ?? 0)) * existMarket?.price!);
-      if (totalSum > 10000000) {
-        this.store.updateMarket({...existMarket, ...removeFalsyPropValueFromObject(market)});
-        const notification = new NotificationsListWidgetNotification(data, totalSum);
-        this.store.addNotification(notification);
-        this.store.setState({isNotificationsEmpty: false});
-      }
-    } else {
+    if (!existMarket) {
       this.store.addMarket(market);
+      return;
     }
+
+    this.addNotificationIfExtremeVolume(market, existMarket);
   }
 
   private onCriticalError(message: TradingViewWebSocketMessage): void {
     const data = message.data as TradingViewWebSocketCriticalErrorPacketData;
     console.error(`${data[0]} - ${data[1]}`);
+  }
+
+  private addNotificationIfExtremeVolume(newMarket: NotificationsListWidgetMarket, existMarket: NotificationsListWidgetMarket): void {
+    const volumeTotalSum = Math.floor((newMarket.volume - existMarket.volume) * existMarket.price);
+    if (volumeTotalSum > this.store.stateSnapshot.extremeVolumeTriggerTotalSum) {
+      this.store.updateMarket({...existMarket, ...removeFalsyPropValueFromObject(newMarket)});
+      const notification = new NotificationsListWidgetNotification({...existMarket, volumeTotalSum});
+      this.store.addNotification(notification);
+      this.store.setState({isNotificationsEmpty: false});
+    }
   }
 }
