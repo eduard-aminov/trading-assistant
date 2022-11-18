@@ -18,11 +18,9 @@ export class Money {
   public from(num: number): string {
     const currency = currencyMap.get(this._currency)!;
 
-    new Intl.NumberFormat(currency.locales, {
+    return `${new Intl.NumberFormat(currency.locales, {
       currency: this._currency,
       useGrouping: true,
-    }).format(num);
-
-    return `${num} ${currency.symbol}`;
+    }).format(num)} ${currency.symbol}`;
   }
 }

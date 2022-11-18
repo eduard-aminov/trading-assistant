@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Store } from '../../core/abstract/store.abstract';
+import { Store } from '../../../core/abstract/store.abstract';
 import { MarketListWidgetState } from '../interfaces/market-list-widget.interface';
 import { MarketListWidgetItem } from '../models/market-list-widget.model';
 

@@ -6,6 +6,7 @@
   <th>Название</th>
   <th>Цена</th>
   <th>Изм. в %</th>
+  <th>Уведомлять</th>
   </thead>
   <tbody>
   <ng-container *ngIf="!(isMarketsLoading$ | async) else loader">
@@ -16,6 +17,12 @@
         appByNumberSignColor
         [number]="market.dayPercentageChange!"
       >{{market.dayPercentageChange + '%'}}</td>
+      <td>
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider round"></span>
+        </label>
+      </td>
     </tr>
   </ng-container>
   </tbody>

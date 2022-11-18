@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { MarketListWidgetFacadeService } from './services/market-list-widget.facade.service';
-import { symbols } from '../core/mocks/symbols.mock';
+import { symbols } from '../../core/mocks/symbols.mock';
 import { takeUntil } from 'rxjs';
-import { DestroyService } from '../core/services/destroy.service';
+import { DestroyService } from '../../core/services/destroy.service';
 
 @Component({
   selector: 'app-market-list-widget',

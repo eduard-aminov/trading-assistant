@@ -1,19 +1,19 @@
 import { Inject, Injectable } from '@angular/core';
-import { TradingViewApiService } from '../../core/services/trading-view-api.service';
+import { TradingViewApiService } from '../../../core/services/trading-view-api.service';
 import { combineLatest, map, Observable, tap } from 'rxjs';
 import { NotificationsListWidgetStoreService } from './notifications-list-widget.store.service';
-import { match } from '../../core/utils/pattern-matching';
-import { TradingViewWebSocketMessagePacketType } from '../../core/enums/trading-view-packet-type';
-import { TradingViewWebSocketMessage } from '../../core/models/trading-view-web-socket-message';
+import { match } from '../../../core/utils/pattern-matching';
+import { TradingViewWebSocketMessagePacketType } from '../../../core/enums/trading-view-packet-type';
+import { TradingViewWebSocketMessage } from '../../../core/models/trading-view-web-socket-message';
 import {
   TradingViewWebSocketCriticalErrorPacketData,
   TradingViewWebSocketQsdPacketData
-} from '../../core/interfaces/trading-view-web-socket-packet.interface';
+} from '../../../core/interfaces/trading-view-web-socket-packet.interface';
 import {
   NotificationsListWidgetMarket,
   NotificationsListWidgetNotification
 } from '../models/notifications-list-widget.model';
-import { removeFalsyPropValueFromObject } from '../../core/utils/remove-falsy-props-from-object';
+import { removeFalsyPropValueFromObject } from '../../../core/utils/remove-falsy-props-from-object';
 
 @Injectable()
 export class NotificationsListWidgetApiService {

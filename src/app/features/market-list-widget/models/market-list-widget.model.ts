@@ -1,4 +1,4 @@
-import { TradingViewWebSocketQsdPacketData } from '../../core/interfaces/trading-view-web-socket-packet.interface';
+import { TradingViewWebSocketQsdPacketData } from '../../../core/interfaces/trading-view-web-socket-packet.interface';
 
 export class MarketListWidgetItem {
   symbol: string;

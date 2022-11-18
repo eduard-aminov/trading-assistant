@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Store } from '../../core/abstract/store.abstract';
+import { Store } from '../../../core/abstract/store.abstract';
 import { NotificationsListWidgetState } from '../interfaces/notifications-list-widget.interface';
 import {
   NotificationsListWidgetMarket,

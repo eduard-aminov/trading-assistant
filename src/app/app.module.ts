@@ -3,9 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MarketListWidgetModule } from './market-list-widget/market-list-widget.module';
 import { HttpClientModule } from '@angular/common/http';
-import { NotificationsListWidgetModule } from './notifications-list-widget/notifications-list-widget.module';
+import { DashboardModule } from './features/dashboard/dashboard.module';
 
 @NgModule({
   declarations: [
@@ -15,8 +14,7 @@ import { NotificationsListWidgetModule } from './notifications-list-widget/notif
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    NotificationsListWidgetModule,
-    MarketListWidgetModule
+    DashboardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -4,7 +4,7 @@ import { MarketListWidgetComponent } from './market-list-widget.component';
 import { MarketListWidgetStoreService } from './services/market-list-widget.store.service';
 import { MarketListWidgetFacadeService } from './services/market-list-widget.facade.service';
 import { MarketListWidgetApiService } from './services/market-list-widget.api.service';
-import { ByNumberSignColorModule } from '../core/directives/by-number-sign-color/by-number-sign-color.module';
+import { ByNumberSignColorModule } from '../../core/directives/by-number-sign-color/by-number-sign-color.module';
 
 @NgModule({
   declarations: [
