@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { MarketListWidgetStoreService } from './market-list-widget.store.service';
 import { MarketListWidgetApiService } from './market-list-widget.api.service';
-import { finalize, map, Observable, switchMap, takeWhile } from 'rxjs';
+import { EMPTY, finalize, Observable, switchMap, takeWhile } from 'rxjs';
 
 @Injectable()
 export class MarketListWidgetFacadeService {
@@ -18,12 +18,12 @@ export class MarketListWidgetFacadeService {
     return this.api.run();
   }
 
-  public loadMarkets(symbols: string[]): Observable<boolean> {
+  public loadMarkets(symbols: string[]): Observable<void> {
     return this.api.loadSymbolsData(symbols).pipe(
       switchMap(() => this.store.select('markets')),
       takeWhile(markets => markets.length < symbols.length),
       finalize(() => this.store.setState({isMarketsLoading: false})),
-      map(() => true)
+      switchMap(() => EMPTY)
     );
   }
 }

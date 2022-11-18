@@ -26,8 +26,6 @@ export class MarketListWidgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.facade.loadMarkets(symbols).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe();
+    this.facade.loadMarkets(symbols).subscribe();
   }
 }

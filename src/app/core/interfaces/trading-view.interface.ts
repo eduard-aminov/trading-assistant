@@ -27,7 +27,7 @@ export interface TradingViewQuoteData {
   pro_name: string;
   short_name: string;
   update_mode: string;
-  volume: string;
+  volume: number;
   ask: string;
   bid: string;
   fundamentals: string;

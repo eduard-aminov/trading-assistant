@@ -2,6 +2,7 @@
   display: block;
   height: 100%;
   overflow: hidden;
+  border-left: solid 5px black;
 }
 
 table {
@@ -22,6 +23,11 @@ table {
     position: sticky;
     top: 0;
     user-select: none;
+    box-sizing: border-box;
+
+    &:first-child {
+      border-bottom: 1px solid gray;
+    }
 
     th:first-child {
       text-align: left;
@@ -39,7 +45,7 @@ table {
   tbody {
     display: table;
     width: 100%;
-    height: calc(100% - 30px);
+    height: calc(100% - 60px);
     background-color: rgb(36, 52, 66);
 
     tr {

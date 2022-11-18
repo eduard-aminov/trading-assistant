@@ -1,7 +1,11 @@
-import { NotificationsListWidgetItem } from '../models/notifications-list-widget.model';
+import {
+  NotificationsListWidgetMarket,
+  NotificationsListWidgetNotification
+} from '../models/notifications-list-widget.model';
 
 export interface NotificationsListWidgetState {
-  notifications: NotificationsListWidgetItem[];
+  markets: NotificationsListWidgetMarket[];
+  notifications: NotificationsListWidgetNotification[];
   isNotificationsLoading: boolean;
   isNotificationsEmpty: boolean;
 }

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { NotificationsListWidgetStoreService } from './notifications-list-widget.store.service';
 import { NotificationsListWidgetApiService } from './notifications-list-widget.api.service';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class NotificationsListWidgetFacadeService {
@@ -19,9 +19,7 @@ export class NotificationsListWidgetFacadeService {
     return this.api.run();
   }
 
-  public loadMarkets(symbols: string[]): Observable<boolean> {
-    return this.api.loadSymbolsData(symbols).pipe(
-      map(() => true)
-    );
+  public startListenMarketsChanges(symbols: string[]): Observable<void> {
+    return this.api.loadSymbolsData(symbols);
   }
 }

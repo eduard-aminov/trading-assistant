@@ -9,7 +9,11 @@ import {
   TradingViewWebSocketCriticalErrorPacketData,
   TradingViewWebSocketQsdPacketData
 } from '../../core/interfaces/trading-view-web-socket-packet.interface';
-import { NotificationsListWidgetItem } from '../models/notifications-list-widget.model';
+import {
+  NotificationsListWidgetMarket,
+  NotificationsListWidgetNotification
+} from '../models/notifications-list-widget.model';
+import { removeFalsyPropValueFromObject } from '../../core/utils/remove-falsy-props-from-object';
 
 @Injectable()
 export class NotificationsListWidgetApiService {
@@ -49,10 +53,19 @@ export class NotificationsListWidgetApiService {
 
   private onQsd(message: TradingViewWebSocketMessage): void {
     const data = message.data as TradingViewWebSocketQsdPacketData;
-    const notification = new NotificationsListWidgetItem(data);
-    if (notification.marketPrice) {
-      this.store.addNotification(notification);
-      this.store.setState({isNotificationsEmpty: false});
+    const market = new NotificationsListWidgetMarket(data);
+    const existMarket = this.store.stateSnapshot.markets.find(item => item.name === market.name);
+
+    if (existMarket?.volume) {
+      const totalSum = Math.floor((Math.floor(market.volume) - Math.floor(existMarket?.volume ?? 0)) * existMarket?.price!);
+      if (totalSum > 10000000) {
+        this.store.updateMarket({...existMarket, ...removeFalsyPropValueFromObject(market)});
+        const notification = new NotificationsListWidgetNotification(data, totalSum);
+        this.store.addNotification(notification);
+        this.store.setState({isNotificationsEmpty: false});
+      }
+    } else {
+      this.store.addMarket(market);
     }
   }
 
