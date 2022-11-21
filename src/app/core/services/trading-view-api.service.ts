@@ -4,6 +4,7 @@ import { first, map, Observable, switchMap, takeUntil, tap } from 'rxjs';
 import { TradingViewWebSocketMessage } from '../models/trading-view-web-socket-message';
 import { TradingViewTimeframe } from '../interfaces/trading-view.interface';
 import { TradingViewWebSocketSendPacketType } from '../enums/trading-view-packet-type';
+import { ResolveSymbolPacket, SendPacket } from '../classes/packet';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class TradingViewApiService {
     this.messages$ = webSocketService.onChannelOpen$.pipe(
       switchMap(() => webSocketService.authorized$),
       switchMap(() => webSocketService.onChannelMessage$),
-      map(event => event.data.map(message => new TradingViewWebSocketMessage(message))),
+      map(event => event.data),
       takeUntil(webSocketService.onChannelClose$),
     );
   }
@@ -27,10 +28,11 @@ export class TradingViewApiService {
     return this.webSocketService.authorized$.pipe(
       first(),
       tap(() => {
-        this.webSocketService.send({
+        const sendPacket = new SendPacket({
           m: TradingViewWebSocketSendPacketType.ChartCreateSession,
           p: [sessionId] as any,
         });
+        this.webSocketService.send(sendPacket);
       }),
       map(() => true),
     );
@@ -40,17 +42,15 @@ export class TradingViewApiService {
     return this.webSocketService.authorized$.pipe(
       first(),
       tap(() => {
-        this.webSocketService.send({
-          m: TradingViewWebSocketSendPacketType.ResolveSymbol,
-          p: [
-            sessionId,
-            seriesId,
-            `=${JSON.stringify({
-              symbol,
-              adjustment: 'splits'
-            })}`,
-          ] as any,
+        const sendPacket = new ResolveSymbolPacket({
+          sessionId,
+          seriesId,
+          options: {
+            symbol,
+            adjustment: 'splits',
+          }
         });
+        this.webSocketService.send(sendPacket);
       }),
       map(() => true),
     );
@@ -60,7 +60,7 @@ export class TradingViewApiService {
     return this.webSocketService.authorized$.pipe(
       first(),
       tap(() => {
-        this.webSocketService.send({
+        const sendPacket = new SendPacket({
           m: TradingViewWebSocketSendPacketType.CreateSeries,
           p: [
             sessionId,
@@ -71,6 +71,7 @@ export class TradingViewApiService {
             range,
           ] as any,
         });
+        this.webSocketService.send(sendPacket);
       }),
       map(() => true),
     );
@@ -80,10 +81,11 @@ export class TradingViewApiService {
     return this.webSocketService.authorized$.pipe(
       first(),
       tap(() => {
-        this.webSocketService.send({
+        const sendPacket = new SendPacket({
           m: TradingViewWebSocketSendPacketType.QuoteCreateSession,
           p: [sessionId] as any,
         });
+        this.webSocketService.send(sendPacket);
       }),
     );
   }
@@ -92,10 +94,11 @@ export class TradingViewApiService {
     return this.webSocketService.authorized$.pipe(
       first(),
       tap(() => {
-        this.webSocketService.send({
+        const sendPacket = new SendPacket({
           m: TradingViewWebSocketSendPacketType.QuoteSetFields,
           p: [sessionId, ...fields] as any,
         });
+        this.webSocketService.send(sendPacket);
       }),
     );
   }
@@ -104,10 +107,11 @@ export class TradingViewApiService {
     return this.webSocketService.authorized$.pipe(
       first(),
       tap(() => {
-        this.webSocketService.send({
+        const sendPacket = new SendPacket({
           m: TradingViewWebSocketSendPacketType.QuoteFastSymbols,
           p: [sessionId] as any,
         });
+        this.webSocketService.send(sendPacket);
       }),
     );
   }
@@ -116,10 +120,11 @@ export class TradingViewApiService {
     return this.webSocketService.authorized$.pipe(
       first(),
       tap(() => {
-        this.webSocketService.send({
+        const sendPacket = new SendPacket({
           m: TradingViewWebSocketSendPacketType.QuoteAddSymbols,
           p: [sessionId, ...symbols] as any,
         });
+        this.webSocketService.send(sendPacket);
       }),
     );
   }
@@ -128,10 +133,11 @@ export class TradingViewApiService {
     return this.webSocketService.authorized$.pipe(
       first(),
       tap(() => {
-        this.webSocketService.send({
+        const sendPacket = new SendPacket({
           m: TradingViewWebSocketSendPacketType.QuoteRemoveSymbols,
           p: [sessionId, ...symbols] as any,
         });
+        this.webSocketService.send(sendPacket);
       }),
     );
   }

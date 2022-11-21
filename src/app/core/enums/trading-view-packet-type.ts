@@ -20,3 +20,12 @@ export enum TradingViewWebSocketMessagePacketType {
   QuoteCompleted = 'quote_completed',
   Qsd = 'qsd',
 }
+
+export enum TradingViewChartTypes {
+  HeikinAshi = 'BarSetHeikenAshi@tv-basicstudies-60!',
+  Renko = 'BarSetRenko@tv-prostudies-40!',
+  LineBreak = 'BarSetPriceBreak@tv-prostudies-34!',
+  Kagi = 'BarSetKagi@tv-prostudies-34!',
+  PointAndFigure = 'BarSetPnF@tv-prostudies-34!',
+  Range = 'BarSetRange@tv-basicstudies-72!',
+}

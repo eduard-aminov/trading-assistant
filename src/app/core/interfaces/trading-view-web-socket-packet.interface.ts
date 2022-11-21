@@ -7,7 +7,7 @@ import { TradingViewQuoteData } from './trading-view.interface';
 
 export interface TradingViewWebSocketSendPacket {
   m: TradingViewWebSocketSendPacketType;
-  p: TradingViewWebSocketPacketData;
+  p: any;
 }
 
 export interface TradingViewWebSocketMessagePacket {
