@@ -1,15 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import {
-  TradingViewWebSocketMessagePacket,
-  TradingViewWebSocketResponse,
-  TradingViewWebSocketSendPacket
-} from '../interfaces/trading-view-web-socket-packet.interface';
 import { TradingViewWebSocketSendPacketType } from '../enums/trading-view-packet-type';
 import { environment } from '../../../environments/environment';
-
-const cleanerRgx = /~h~/g;
-const splitterRgx = /~m~[0-9]+~m~/g;
+import { MessagePacket, SendPacket } from '../classes/packet';
+import { TradingViewWebSocketMessage } from '../models/trading-view-web-socket-message';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +14,7 @@ export class TradingViewWebSocketService {
   private _authorized$ = new Subject<void>();
   private _onChannelOpen$ = new Subject<Event>();
   private _onChannelClose$ = new Subject<CloseEvent>();
-  private _onChannelMessage$ = new Subject<MessageEvent<TradingViewWebSocketMessagePacket[]>>();
+  private _onChannelMessage$ = new Subject<MessageEvent<TradingViewWebSocketMessage[]>>();
   private _onChannelError$ = new Subject<Event>();
 
   public authorized$ = this._authorized$.asObservable();
@@ -31,11 +25,13 @@ export class TradingViewWebSocketService {
 
   constructor() {
     this.channel.onopen = (event: Event) => {
-      this.send({
+      const packet = new SendPacket({
         m: TradingViewWebSocketSendPacketType.SetAuthToken,
         p: [environment.TRADING_VIEW_AUTH_TOKEN] as any,
       });
+      this.send(packet);
       this._onChannelOpen$.next(event);
+      this._authorized$.next();
     };
 
     this.channel.onclose = (event: CloseEvent) => {
@@ -43,15 +39,14 @@ export class TradingViewWebSocketService {
     };
 
     this.channel.onmessage = (event: MessageEvent<string>) => {
-      const parsedPacket = this.parsePacket(event.data);
-      if (this.isPingPacket(parsedPacket)) {
-        this.pong(parsedPacket);
-      } else {
-        if ((parsedPacket as any)[0]['session_id']) {
-          this._authorized$.next();
-        }
+      const messagePacket = new MessagePacket(event.data);
+      const formattedMessagePacket = messagePacket.format();
 
-        this._onChannelMessage$.next({...event, data: parsedPacket});
+      if (messagePacket.isPing(formattedMessagePacket)) {
+        const sendPacket = new SendPacket(`~h~${formattedMessagePacket[0]}`);
+        this.send(sendPacket);
+      } else {
+        this._onChannelMessage$.next({...event, data: messagePacket.getMessages()});
       }
     };
 
@@ -60,42 +55,9 @@ export class TradingViewWebSocketService {
     };
   }
 
-  public send(packet: TradingViewWebSocketSendPacket | string): void {
+  public send(packet: SendPacket): void {
     if (this.channel.OPEN) {
-      const formattedPacket = this.formatPacket(packet);
-      this.channel.send(formattedPacket);
+      this.channel.send(packet.format());
     }
-  }
-
-  private parsePacket(str: string): TradingViewWebSocketMessagePacket[] {
-    return str.replace(cleanerRgx, '')
-              .split(splitterRgx)
-              .map((p) => {
-                if (!p) {
-                  return false;
-                }
-                try {
-                  return JSON.parse(p);
-                } catch (error) {
-                  console.warn('Cant parse', p);
-                  return false;
-                }
-              })
-              .filter((p) => p);
-  };
-
-  private formatPacket(packet: TradingViewWebSocketSendPacket | string): string {
-    const msg = typeof packet === 'object'
-                ? JSON.stringify(packet)
-                : String(packet);
-    return `~m~${msg.length}~m~${msg}`;
-  };
-
-  private isPingPacket(response: TradingViewWebSocketResponse): boolean {
-    return typeof response[0] === 'number';
-  }
-
-  private pong(response: TradingViewWebSocketResponse): void {
-    this.send(`~h~${response[0]}`);
   }
 }

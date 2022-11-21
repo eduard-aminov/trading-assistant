@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { TradingViewApiService } from '../../../core/services/trading-view-api.service';
-import { combineLatest, map, Observable, tap } from 'rxjs';
+import { combineLatest, EMPTY, map, Observable, switchMap, tap } from 'rxjs';
 import { MarketListWidgetStoreService } from './market-list-widget.store.service';
 import { match } from '../../../core/utils/pattern-matching';
 import { TradingViewWebSocketMessagePacketType } from '../../../core/enums/trading-view-packet-type';
@@ -17,10 +17,33 @@ export class MarketListWidgetApiService {
 
   private widgetName = 'MarketListWidget';
 
+  private messages$ = this.api.messages$.pipe(
+    map(messages => messages.filter(message => message.sessionId === this.widgetName))
+  );
+
   constructor(
     @Inject(TradingViewApiService) private api: TradingViewApiService,
     @Inject(MarketListWidgetStoreService) private store: MarketListWidgetStoreService,
   ) {}
+
+  public subscribeMarketsChanges(marketsNames: string[]): Observable<MarketListWidgetItem[]> {
+    return combineLatest([
+      this.messages$,
+      this.api.quoteAddSymbols(this.widgetName, marketsNames),
+    ]).pipe(
+      map(([messages]) => messages.filter(message => message.type === TradingViewWebSocketMessagePacketType.Qsd)),
+      map(messages => messages.map(message => new MarketListWidgetItem(message.data as TradingViewWebSocketQsdPacketData))),
+    );
+  }
+
+  public unsubscribeMarketsChanges(marketsNames: string[]): Observable<void> {
+    return combineLatest([
+      this.messages$,
+      this.api.quoteRemoveSymbols(this.widgetName, marketsNames),
+    ]).pipe(
+      switchMap(() => EMPTY),
+    );
+  }
 
   public run(): Observable<boolean> {
     const fields = ['lp', 'chp', 'short_name', 'volume'];
