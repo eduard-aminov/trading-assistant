@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
 import { NotificationsListWidgetStoreService } from './notifications-list-widget.store.service';
 import { NotificationsListWidgetApiService } from './notifications-list-widget.api.service';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { NotificationsListWidgetNotification } from '../models/notifications-list-widget.model';
+import { removeFalsyPropValueFromObject } from '../../../core/utils/remove-falsy-props-from-object';
+import { MarketListWidgetItem } from '../../market-list-widget/models/market-list-widget.model';
+import { symbols } from '../../../core/mocks/symbols.mock';
 
 @Injectable()
 export class NotificationsListWidgetFacadeService {
@@ -15,11 +19,42 @@ export class NotificationsListWidgetFacadeService {
   ) {
   }
 
-  public runWebsocketApi(): Observable<boolean> {
-    return this.api.run();
+  public openMarketsChangesConnection(): Observable<void> {
+    return this.api.openMarketsChangesConnection(['lp', 'volume', 'currency_code']);
   }
 
-  public startListenMarketsChanges(symbols: string[]): Observable<void> {
-    return this.api.loadSymbolsData(symbols);
+  public closeMarketsChangesConnection(): Observable<void> {
+    return this.api.closeMarketChangesConnection();
+  }
+
+  public subscribeMarketsChanges(): Observable<MarketListWidgetItem[]> {
+    return this.api.subscribeMarketsChanges(symbols).pipe(
+      tap(markets => {
+        for (const market of markets) {
+          this.addNotification(market);
+        }
+      })
+    );
+  }
+
+  private addNotification(market: MarketListWidgetItem): void {
+    const existMarket = this.store.stateSnapshot.markets.find(item => item.name === market.name);
+
+    if (!existMarket) {
+      this.store.addMarket(market);
+      return;
+    }
+
+    this.addNotificationIfExtremeVolume(market, existMarket);
+  }
+
+  private addNotificationIfExtremeVolume(newMarket: MarketListWidgetItem, existMarket: MarketListWidgetItem): void {
+    const volumeTotalSum = Math.floor((newMarket.volume - existMarket.volume) * existMarket.price);
+    if (volumeTotalSum > this.store.stateSnapshot.extremeVolumeTriggerTotalSum) {
+      this.store.updateMarket({...existMarket, ...removeFalsyPropValueFromObject(newMarket)});
+      const notification = new NotificationsListWidgetNotification({...existMarket, volumeTotalSum});
+      this.store.addNotification(notification);
+      this.store.setState({isNotificationsEmpty: false});
+    }
   }
 }

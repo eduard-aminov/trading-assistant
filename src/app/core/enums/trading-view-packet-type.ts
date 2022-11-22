@@ -4,6 +4,7 @@ export enum TradingViewWebSocketSendPacketType {
   ResolveSymbol = 'resolve_symbol',
   CreateSeries = 'create_series',
   QuoteCreateSession = 'quote_create_session',
+  QuoteDeleteSession = 'quote_delete_session',
   QuoteSetFields = 'quote_set_fields',
   QuoteAddSymbols = 'quote_add_symbols',
   QuoteRemoveSymbols = 'quote_remove_symbols',
@@ -12,6 +13,9 @@ export enum TradingViewWebSocketSendPacketType {
 
 export enum TradingViewWebSocketMessagePacketType {
   CriticalError = 'critical_error',
+  SymbolError = 'symbol_error',
+  SeriesError = 'series_error',
+  ProtocolError = 'protocol_error',
   SymbolResolved = 'symbol_resolved',
   SeriesLoading = 'series_loading',
   TimescaleUpdate = 'timescale_update',

@@ -1,17 +1,18 @@
 import { Inject, Injectable } from '@angular/core';
 import { TradingViewWebSocketService } from './trading-view-web-socket.service';
 import { first, map, Observable, switchMap, takeUntil, tap } from 'rxjs';
-import { TradingViewWebSocketMessage } from '../models/trading-view-web-socket-message';
 import { TradingViewTimeframe } from '../interfaces/trading-view.interface';
 import { TradingViewWebSocketSendPacketType } from '../enums/trading-view-packet-type';
 import { ResolveSymbolPacket, SendPacket } from '../classes/packet';
+import { Message } from '../classes/messages/message';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TradingViewApiService {
 
-  public messages$: Observable<TradingViewWebSocketMessage[]>;
+  public messages$: Observable<Message[]>;
+  public authorized$: Observable<void>;
 
   constructor(
     @Inject(TradingViewWebSocketService) private webSocketService: TradingViewWebSocketService
@@ -22,6 +23,8 @@ export class TradingViewApiService {
       map(event => event.data),
       takeUntil(webSocketService.onChannelClose$),
     );
+
+    this.authorized$ = webSocketService.authorized$;
   }
 
   public createSession(sessionId: string): Observable<boolean> {
@@ -83,6 +86,19 @@ export class TradingViewApiService {
       tap(() => {
         const sendPacket = new SendPacket({
           m: TradingViewWebSocketSendPacketType.QuoteCreateSession,
+          p: [sessionId] as any,
+        });
+        this.webSocketService.send(sendPacket);
+      }),
+    );
+  }
+
+  public quoteDeleteSession(sessionId: string): Observable<void> {
+    return this.webSocketService.authorized$.pipe(
+      first(),
+      tap(() => {
+        const sendPacket = new SendPacket({
+          m: TradingViewWebSocketSendPacketType.QuoteDeleteSession,
           p: [sessionId] as any,
         });
         this.webSocketService.send(sendPacket);

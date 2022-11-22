@@ -10,8 +10,7 @@ class Case<T, P = any> {
     private result: unknown | null = null,
   ) {}
 
-  case<U>(compareValue: T, result: Fn<U & T> | U): Case<T, P>;
-  case(compareValue: any, result: any): Case<any> {
+  case<U>(compareValue: T, result: Fn<U & T> | U): Case<T, P> {
     if (isPresent(this.result)) {
       return this;
     } else if (compareValue === this.value) {
@@ -20,9 +19,12 @@ class Case<T, P = any> {
     return new Case(this.value);
   }
 
-  default<D>(defaultValue?: D): any {
+  default<D>(defaultValue?: D | Function): any {
     if (isPresent(this.result)) {
       return this.result;
+    }
+    if (defaultValue instanceof Function) {
+      return defaultValue();
     }
     return defaultValue;
   }
@@ -35,7 +37,6 @@ function handleResultAndGetCase<T>(value: T, result: any): Case<T> {
   return new Case(value, result);
 }
 
-export function match<T>(value: T): Case<T, T>;
-export function match<T>(value: any): Case<any> {
+export function match<T>(value: T): Case<T, T> {
   return new Case<any, T>(value);
 }

@@ -1,19 +1,22 @@
-import { TradingViewWebSocketQsdPacketData } from '../../../core/interfaces/trading-view-web-socket-packet.interface';
+import { QsdMessage } from '../../../core/classes/messages/qsd-message';
 
 export class MarketListWidgetItem {
   symbol: string;
   icon?: string;
   name?: string;
-  price?: number;
+  currency: string;
+  price: number;
+  volume: number;
   dayPercentageChange?: number;
 
-  constructor(data: TradingViewWebSocketQsdPacketData) {
-    const quoteData = data[1].v;
+  constructor(message: QsdMessage) {
 
-    this.symbol = data[1].n;
+    this.symbol = message.symbol;
     this.icon = '';
-    this.name = quoteData.short_name;
-    this.price = quoteData?.lp;
-    this.dayPercentageChange = quoteData?.chp;
+    this.name = message.symbol;
+    this.price = message.data?.lp ?? 0;
+    this.currency = message.data?.currency_code ?? 'USD';
+    this.dayPercentageChange = message.data?.chp;
+    this.volume = Math.round(message.data?.volume ?? 0);
   }
 }

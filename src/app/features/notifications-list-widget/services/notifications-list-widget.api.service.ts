@@ -1,81 +1,70 @@
 import { Inject, Injectable } from '@angular/core';
 import { TradingViewApiService } from '../../../core/services/trading-view-api.service';
-import { combineLatest, map, Observable, tap } from 'rxjs';
+import { combineLatest, EMPTY, forkJoin, map, Observable, switchMap, tap } from 'rxjs';
 import { NotificationsListWidgetStoreService } from './notifications-list-widget.store.service';
-import { match } from '../../../core/utils/pattern-matching';
-import { TradingViewWebSocketMessagePacketType } from '../../../core/enums/trading-view-packet-type';
-import { TradingViewWebSocketMessage } from '../../../core/models/trading-view-web-socket-message';
-import {
-  TradingViewWebSocketCriticalErrorPacketData,
-  TradingViewWebSocketQsdPacketData
-} from '../../../core/interfaces/trading-view-web-socket-packet.interface';
-import {
-  NotificationsListWidgetMarket,
-  NotificationsListWidgetNotification
-} from '../models/notifications-list-widget.model';
-import { removeFalsyPropValueFromObject } from '../../../core/utils/remove-falsy-props-from-object';
+import { TradingViewQuoteFields } from '../../../core/interfaces/trading-view.interface';
+import { MarketListWidgetItem } from '../../market-list-widget/models/market-list-widget.model';
+import { Message } from '../../../core/classes/messages/message';
+import { QsdMessage } from '../../../core/classes/messages/qsd-message';
 
 @Injectable()
 export class NotificationsListWidgetApiService {
 
   private widgetName = 'NotificationsListWidget';
 
+  private messages$ = this.api.messages$.pipe(
+    map(messages => messages.filter(message => message.sessionId === this.widgetName)),
+    tap(messages => this.handleErrorMessages(messages)),
+  );
+
+  private qsdMessages$ = this.messages$.pipe(
+    map(messages => messages.filter(message => message.isQsd()) as QsdMessage[]),
+  );
+
   constructor(
     @Inject(TradingViewApiService) private api: TradingViewApiService,
     @Inject(NotificationsListWidgetStoreService) private store: NotificationsListWidgetStoreService,
   ) {}
 
-  public loadSymbolsData(symbols: string[]): Observable<void> {
-    return this.api.quoteAddSymbols(this.widgetName, symbols);
-  }
-
-  public run(): Observable<boolean> {
-    const fields = ['lp', 'chp', 'short_name', 'volume', 'currency_code'];
-    return combineLatest([
-      this.api.messages$,
+  public openMarketsChangesConnection(fields: TradingViewQuoteFields[]): Observable<void> {
+    return forkJoin([
       this.api.quoteCreateSession(this.widgetName),
       this.api.quoteSetFields(this.widgetName, fields),
       this.api.quoteFastSymbols(this.widgetName),
     ]).pipe(
-      map(value => value[0]),
-      tap(messages => messages.forEach(message => {
-        if (message.sessionId === this.widgetName) {
-          match(message.type)
-            .case(TradingViewWebSocketMessagePacketType.Qsd, () => this.onQsd(message))
-            .case(TradingViewWebSocketMessagePacketType.CriticalError, () => this.onCriticalError(message))
-            .default();
-        }
-      })),
-      map(() => true)
+      switchMap(() => EMPTY),
     );
   }
 
+  public closeMarketChangesConnection(): Observable<void> {
+    return this.api.quoteDeleteSession(this.widgetName).pipe(
+      switchMap(() => EMPTY),
+    );
+  };
 
-  private onQsd(message: TradingViewWebSocketMessage): void {
-    const data = message.data as TradingViewWebSocketQsdPacketData;
-    const market = new NotificationsListWidgetMarket(data);
-    const existMarket = this.store.stateSnapshot.markets.find(item => item.name === market.name);
-
-    if (!existMarket) {
-      this.store.addMarket(market);
-      return;
-    }
-
-    this.addNotificationIfExtremeVolume(market, existMarket);
+  public subscribeMarketsChanges(marketsNames: string[]): Observable<MarketListWidgetItem[]> {
+    return combineLatest([
+      this.qsdMessages$,
+      this.api.quoteAddSymbols(this.widgetName, marketsNames),
+    ]).pipe(
+      map(([messages]) => messages.filter(message => message.isQsd())),
+      map(messages => messages.map(message => new MarketListWidgetItem(message))),
+    );
   }
 
-  private onCriticalError(message: TradingViewWebSocketMessage): void {
-    const data = message.data as TradingViewWebSocketCriticalErrorPacketData;
-    console.error(`${data[0]} - ${data[1]}`);
+  public unsubscribeMarketsChanges(marketsNames: string[]): Observable<void> {
+    return combineLatest([
+      this.qsdMessages$,
+      this.api.quoteRemoveSymbols(this.widgetName, marketsNames),
+    ]).pipe(
+      switchMap(() => EMPTY),
+    );
   }
 
-  private addNotificationIfExtremeVolume(newMarket: NotificationsListWidgetMarket, existMarket: NotificationsListWidgetMarket): void {
-    const volumeTotalSum = Math.floor((newMarket.volume - existMarket.volume) * existMarket.price);
-    if (volumeTotalSum > this.store.stateSnapshot.extremeVolumeTriggerTotalSum) {
-      this.store.updateMarket({...existMarket, ...removeFalsyPropValueFromObject(newMarket)});
-      const notification = new NotificationsListWidgetNotification({...existMarket, volumeTotalSum});
-      this.store.addNotification(notification);
-      this.store.setState({isNotificationsEmpty: false});
+  private handleErrorMessages(messages: Message[]): void {
+    const errorMessages = messages.filter(message => message.isError());
+    for (const message of errorMessages) {
+      console.error(`${message.sessionId} - ${message.data}`);
     }
   }
 }

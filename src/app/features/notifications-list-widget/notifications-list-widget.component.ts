@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { NotificationsListWidgetFacadeService } from './services/notifications-list-widget.facade.service';
-import { filter, map, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, filter, map, switchMap, takeUntil } from 'rxjs';
 import { DestroyService } from '../../core/services/destroy.service';
-import { symbols } from '../../core/mocks/symbols.mock';
 import { TelegramBotApiService } from '../../core/services/telegram-bot-api.service';
 import { environment } from '../../../environments/environment';
 import { isPresent } from '../../core/utils/is-present';
@@ -26,14 +25,15 @@ export class NotificationsListWidgetComponent implements OnInit {
     @Inject(TelegramBotApiService) private telegramBotApi: TelegramBotApiService,
     @Inject(NotificationsListWidgetFacadeService) private facade: NotificationsListWidgetFacadeService,
     @Inject(DestroyService) private destroy$: DestroyService,
-  ) {
-    facade.runWebsocketApi().pipe(
-      takeUntil(this.destroy$)
-    ).subscribe();
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.facade.startListenMarketsChanges(symbols).subscribe();
+    combineLatest([
+      this.facade.openMarketsChangesConnection(),
+      this.facade.subscribeMarketsChanges(),
+    ]).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe();
 
     this.notifications$.pipe(
       map(notifications => notifications.at(-1)),
@@ -46,6 +46,12 @@ export class NotificationsListWidgetComponent implements OnInit {
         }`)
       ),
       takeUntil(this.destroy$)
+    ).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.facade.closeMarketsChangesConnection().pipe(
+      takeUntil(this.destroy$),
     ).subscribe();
   }
 }

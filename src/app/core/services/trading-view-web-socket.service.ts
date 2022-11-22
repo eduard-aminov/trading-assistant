@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { TradingViewWebSocketSendPacketType } from '../enums/trading-view-packet-type';
 import { environment } from '../../../environments/environment';
 import { MessagePacket, SendPacket } from '../classes/packet';
-import { TradingViewWebSocketMessage } from '../models/trading-view-web-socket-message';
+import { Message } from '../classes/messages/message';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class TradingViewWebSocketService {
   private _authorized$ = new Subject<void>();
   private _onChannelOpen$ = new Subject<Event>();
   private _onChannelClose$ = new Subject<CloseEvent>();
-  private _onChannelMessage$ = new Subject<MessageEvent<TradingViewWebSocketMessage[]>>();
+  private _onChannelMessage$ = new Subject<MessageEvent<Message[]>>();
   private _onChannelError$ = new Subject<Event>();
 
   public authorized$ = this._authorized$.asObservable();
@@ -45,6 +45,8 @@ export class TradingViewWebSocketService {
       if (messagePacket.isPing(formattedMessagePacket)) {
         const sendPacket = new SendPacket(`~h~${formattedMessagePacket[0]}`);
         this.send(sendPacket);
+      } else if (!formattedMessagePacket[0].m) { // drop initial packet
+        return;
       } else {
         this._onChannelMessage$.next({...event, data: messagePacket.getMessages()});
       }

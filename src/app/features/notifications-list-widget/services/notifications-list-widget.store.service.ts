@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Store } from '../../../core/abstract/store.abstract';
 import { NotificationsListWidgetState } from '../interfaces/notifications-list-widget.interface';
-import {
-  NotificationsListWidgetMarket,
-  NotificationsListWidgetNotification
-} from '../models/notifications-list-widget.model';
+import { NotificationsListWidgetNotification } from '../models/notifications-list-widget.model';
+import { MarketListWidgetItem } from '../../market-list-widget/models/market-list-widget.model';
 
 const initialState: NotificationsListWidgetState = {
   markets: [],
@@ -20,15 +18,15 @@ export class NotificationsListWidgetStoreService extends Store<NotificationsList
     super(initialState);
   }
 
-  public setMarkets(markets: NotificationsListWidgetMarket[]): void {
+  public setMarkets(markets: MarketListWidgetItem[]): void {
     this.setState({markets});
   }
 
-  public addMarket(market: NotificationsListWidgetMarket): void {
+  public addMarket(market: MarketListWidgetItem): void {
     this.setState({markets: [...this.stateSnapshot.markets, market]});
   }
 
-  public updateMarket(market: NotificationsListWidgetMarket): void {
+  public updateMarket(market: MarketListWidgetItem): void {
     const markets = this.stateSnapshot.markets.map(item => {
       if (item.name === market.name) {
         return market;

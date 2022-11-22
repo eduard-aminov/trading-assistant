@@ -1,4 +1,5 @@
-import { TradingViewWebSocketQsdPacketData } from '../../../core/interfaces/trading-view-web-socket-packet.interface';
+import { MarketListWidgetItem } from '../../market-list-widget/models/market-list-widget.model';
+import { QsdMessage } from '../../../core/classes/messages/qsd-message';
 
 export class NotificationsListWidgetMarket {
   name: string;
@@ -6,26 +7,23 @@ export class NotificationsListWidgetMarket {
   price: number;
   volume: number;
 
-  constructor(data: TradingViewWebSocketQsdPacketData) {
-    const symbol = data[1].n;
-    const quoteData = data[1].v;
-
-    this.name = symbol;
-    this.price = quoteData?.lp ?? 0;
-    this.currency = quoteData?.currency_code ?? null;
-    this.volume = Math.round(quoteData?.volume ?? 0);
+  constructor(message: QsdMessage) {
+    this.name = message.symbol;
+    this.price = message.data.lp ?? 0;
+    this.currency = message.data?.currency_code ?? null;
+    this.volume = Math.round(message.data?.volume ?? 0);
   }
 }
 
 export class NotificationsListWidgetNotification {
   marketName: string;
-  marketCurrency: string | null;
+  marketCurrency: string;
   time: string;
   volumeTotalSum: number;
 
-  constructor(market: NotificationsListWidgetMarket & { volumeTotalSum: number }) {
+  constructor(market: MarketListWidgetItem & { volumeTotalSum: number }) {
     const now = new Date();
-    this.marketName = market.name;
+    this.marketName = market.symbol;
     this.marketCurrency = market.currency === 'USDT' ? 'USD' : market.currency; //TODO
     this.time = `${now.getHours()}:${now.getMinutes()}`;
     this.volumeTotalSum = market.volumeTotalSum;
