@@ -17,15 +17,17 @@ export class NotificationsListWidgetMarket {
 
 export class NotificationsListWidgetNotification {
   marketName: string;
-  marketCurrency: string;
+  marketCurrency?: string;
   time: string;
   volumeTotalSum: number;
+  direction: string;
 
-  constructor(market: MarketListWidgetItem & { volumeTotalSum: number }) {
+  constructor(market: MarketListWidgetItem & { volumeTotalSum: number, direction: string }) {
     const now = new Date();
     this.marketName = market.symbol;
     this.marketCurrency = market.currency === 'USDT' ? 'USD' : market.currency; //TODO
     this.time = `${now.getHours()}:${now.getMinutes()}`;
     this.volumeTotalSum = market.volumeTotalSum;
+    this.direction = market.direction;
   }
 }

@@ -31,28 +31,30 @@ export class NotificationsListWidgetFacadeService {
     return this.api.subscribeMarketsChanges(symbols).pipe(
       tap(markets => {
         for (const market of markets) {
-          this.addNotification(market);
+          this.updateOrAddMarket(market);
         }
       })
     );
   }
 
-  private addNotification(market: MarketListWidgetItem): void {
-    const existMarket = this.store.stateSnapshot.markets.find(item => item.name === market.name);
+  private updateOrAddMarket(market: MarketListWidgetItem): void {
+    const existMarket = this.store.stateSnapshot.markets.find(item => item.symbol === market.symbol);
 
     if (!existMarket) {
       this.store.addMarket(market);
       return;
     }
 
+    this.store.updateMarket({...existMarket, ...removeFalsyPropValueFromObject(market)});
     this.addNotificationIfExtremeVolume(market, existMarket);
   }
 
   private addNotificationIfExtremeVolume(newMarket: MarketListWidgetItem, existMarket: MarketListWidgetItem): void {
-    const volumeTotalSum = Math.floor((newMarket.volume - existMarket.volume) * existMarket.price);
+    const volumeTotalSum = Math.floor((newMarket.volume! - existMarket.volume!) * existMarket.price!);
     if (volumeTotalSum > this.store.stateSnapshot.extremeVolumeTriggerTotalSum) {
+      const direction = (existMarket.price! - newMarket.price!) > 0 ? 'Шорт' : (existMarket.price! - newMarket.price!) === 0 ? 'Неизвестно' : 'Лонг';
       this.store.updateMarket({...existMarket, ...removeFalsyPropValueFromObject(newMarket)});
-      const notification = new NotificationsListWidgetNotification({...existMarket, volumeTotalSum});
+      const notification = new NotificationsListWidgetNotification({...existMarket, volumeTotalSum, direction});
       this.store.addNotification(notification);
       this.store.setState({isNotificationsEmpty: false});
     }

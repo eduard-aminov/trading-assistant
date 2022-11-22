@@ -28,7 +28,7 @@ export class NotificationsListWidgetStoreService extends Store<NotificationsList
 
   public updateMarket(market: MarketListWidgetItem): void {
     const markets = this.stateSnapshot.markets.map(item => {
-      if (item.name === market.name) {
+      if (item.symbol === market.symbol) {
         return market;
       }
       return item;

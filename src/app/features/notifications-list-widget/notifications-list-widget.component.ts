@@ -43,7 +43,7 @@ export class NotificationsListWidgetComponent implements OnInit {
         `${notification!.marketName} - ${
           new Money(notification!.marketCurrency!)
             .from(notification!.volumeTotalSum)
-        }`)
+        } ${notification!.direction}`)
       ),
       takeUntil(this.destroy$)
     ).subscribe();
