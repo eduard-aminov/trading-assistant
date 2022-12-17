@@ -21,13 +21,15 @@ export class NotificationsListWidgetNotification {
   time: string;
   volumeTotalSum: number;
   direction: string;
+  amount: number;
 
-  constructor(market: MarketListWidgetItem & { volumeTotalSum: number, direction: string }) {
+  constructor(market: MarketListWidgetItem & { volumeTotalSum: number, totalAmount: number, direction: string }) {
     const now = new Date();
     this.marketName = market.symbol;
-    this.marketCurrency = market.currency === 'USDT' ? 'USD' : market.currency; //TODO
-    this.time = `${now.getHours()}:${now.getMinutes()}`;
+    this.marketCurrency = market.currency;
+    this.time = `${now.toLocaleDateString()} ${now.getHours()}:${now.getMinutes()}`;
     this.volumeTotalSum = market.volumeTotalSum;
     this.direction = market.direction;
+    this.amount = market.totalAmount;
   }
 }

@@ -4,13 +4,27 @@ import { NotificationsListWidgetComponent } from './notifications-list-widget.co
 import { NotificationsListWidgetStoreService } from './services/notifications-list-widget.store.service';
 import { NotificationsListWidgetFacadeService } from './services/notifications-list-widget.facade.service';
 import { NotificationsListWidgetApiService } from './services/notifications-list-widget.api.service';
+import { DBConfig, NgxIndexedDBModule } from 'ngx-indexed-db';
+
+const dbConfig: DBConfig  = {
+  name: 'Database',
+  version: 1,
+  objectStoresMeta: [{
+    store: 'deals',
+    storeConfig: { keyPath: 'id', autoIncrement: true },
+    storeSchema: [
+      { name: 'name', keypath: 'name', options: { unique: false } },
+    ]
+  }]
+};
 
 @NgModule({
   declarations: [
     NotificationsListWidgetComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    NgxIndexedDBModule.forRoot(dbConfig),
   ],
   providers: [
     NotificationsListWidgetApiService,

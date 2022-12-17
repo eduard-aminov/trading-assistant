@@ -9,7 +9,7 @@ const initialState: NotificationsListWidgetState = {
   notifications: [],
   isNotificationsLoading: true,
   isNotificationsEmpty: true,
-  extremeVolumeTriggerTotalSum: 5000000,
+  extremeVolumeTriggerTotalSum: 0,
 };
 
 @Injectable()
@@ -34,6 +34,10 @@ export class NotificationsListWidgetStoreService extends Store<NotificationsList
       return item;
     });
     this.setMarkets(markets);
+  }
+
+  public setNotifications(notifications: NotificationsListWidgetNotification[]): void {
+    this.setState({notifications});
   }
 
   public addNotification(notification: NotificationsListWidgetNotification): void {

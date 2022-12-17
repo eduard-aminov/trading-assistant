@@ -22,8 +22,8 @@ export class MarketListWidgetComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     combineLatest([
-      this.facade.openMarketsChangesConnection(),
-      this.facade.subscribeMarketsChanges(),
+      // this.facade.openMarketsChangesConnection(),
+      // this.facade.subscribeMarketsChanges(),
     ]).pipe(
       takeUntil(this.destroy$),
     ).subscribe();

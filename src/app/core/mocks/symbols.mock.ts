@@ -59,5 +59,6 @@ const binanceSymbols = [
 
 export const symbols = [
   // ...binanceSymbols,
-  ...moexSymbols,
+  // ...moexSymbols,
+  'MOEX:USDRUB_TOM',
 ];

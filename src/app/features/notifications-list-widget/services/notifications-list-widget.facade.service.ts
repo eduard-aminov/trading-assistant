@@ -51,11 +51,12 @@ export class NotificationsListWidgetFacadeService {
 
   private addNotificationIfExtremeVolume(newMarket: MarketListWidgetItem, existMarket: MarketListWidgetItem): void {
     const volumeTotalSum = Math.floor((newMarket.volume! - existMarket.volume!) * existMarket.price!);
+    const totalAmount = Math.floor((newMarket.volume! - existMarket.volume!))
     if (volumeTotalSum > this.store.stateSnapshot.extremeVolumeTriggerTotalSum) {
-      const direction = (existMarket.price! - newMarket.price!) > 0 ? 'Шорт' : (existMarket.price! - newMarket.price!) === 0 ? 'Неизвестно' : 'Лонг';
+      const direction = (existMarket.price! - newMarket.price!) > 0 ? 'Шорт' : (existMarket.price! - newMarket.price!) === existMarket.price ? 'Лимитка' : 'Лонг';
       this.store.updateMarket({...existMarket, ...removeFalsyPropValueFromObject(newMarket)});
-      const notification = new NotificationsListWidgetNotification({...existMarket, volumeTotalSum, direction});
-      this.store.addNotification(notification);
+      const notification = new NotificationsListWidgetNotification({...existMarket, volumeTotalSum, totalAmount, direction});
+      this.store.setNotifications([notification]);
       this.store.setState({isNotificationsEmpty: false});
     }
   }
