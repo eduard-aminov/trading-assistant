@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DashboardState } from '../interfaces/dashboard.interface';
+import { DashboardState } from '../interfaces/market-robot.interface';
 import { Store } from '../../../core/abstract/store.abstract';
 
 const initialState: DashboardState = {
@@ -7,7 +7,7 @@ const initialState: DashboardState = {
 };
 
 @Injectable()
-export class DashboardStoreService extends Store<DashboardState> {
+export class MarketRobotStoreService extends Store<DashboardState> {
   constructor() {
     super(initialState);
   }

@@ -1,0 +1,26 @@
+<div class="market-robot-widget">
+  <div class="header">
+    <h2>{{marketName}}</h2>
+  </div>
+  <div class="body">
+    <div class="item" *ngFor="let item of items">
+      <div class="item-share-number">
+        <div>{{item.shareNumber}}</div>
+      </div>
+      <div class="item-time">
+        <div class="item-time-long">
+          <div>Посл. изм.: {{item.long.lastTime}}</div>
+          <div>Сред. время: {{item.long.averageTime}}</div>
+        </div>
+        <div class="item-time-short">
+          <div>Посл. изм.: {{item.short.lastTime}}</div>
+          <div>Сред. время: {{item.short.averageTime}}</div>
+        </div>
+      </div>
+      <div class="item-deals">
+        <div class="item-deals-long">{{item.long.number}}</div>
+        <div class="item-deals-short">{{item.short.number}}</div>
+      </div>
+    </div>
+  </div>
+</div>

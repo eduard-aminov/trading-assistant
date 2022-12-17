@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
-import { DashboardModule } from './features/dashboard/dashboard.module';
+import { MarketRobotModule } from './features/market-robot/market-robot.module';
 
 @NgModule({
   declarations: [
@@ -14,7 +14,7 @@ import { DashboardModule } from './features/dashboard/dashboard.module';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    DashboardModule
+    MarketRobotModule
   ],
   providers: [],
   bootstrap: [AppComponent]

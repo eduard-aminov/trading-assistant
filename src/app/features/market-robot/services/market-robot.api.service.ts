@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
-import { DashboardStoreService } from './dashboard.store.service';
+import { MarketRobotStoreService } from './market-robot.store.service';
 import { TradingViewApiService } from '../../../core/services/trading-view-api.service';
 
 @Injectable()
-export class DashboardApiService {
+export class MarketRobotApiService {
   constructor(
     @Inject(TradingViewApiService) private api: TradingViewApiService,
-    @Inject(DashboardStoreService) private store: DashboardStoreService,
+    @Inject(MarketRobotStoreService) private store: MarketRobotStoreService,
   ) {}
 }
